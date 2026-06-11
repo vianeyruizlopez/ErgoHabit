@@ -2,8 +2,8 @@ package com.alilopez.modules.usuarioFinal.agua.infrastructure.persistence
 
 import com.alilopez.modules.usuarios.infrastructure.persistence.UsuarioTable
 import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.javatime.timestamp
-import java.time.Instant
+import org.jetbrains.exposed.sql.javatime.date
+import java.time.LocalDate
 
 object ProgresoAguaTable : Table("progreso_agua") {
 
@@ -12,8 +12,10 @@ object ProgresoAguaTable : Table("progreso_agua") {
         UsuarioTable.idUsuario,
         onDelete = org.jetbrains.exposed.sql.ReferenceOption.CASCADE
     )
-    val fecha = timestamp("fecha").clientDefault { Instant.now() }
+    val fecha = date("fecha").clientDefault { LocalDate.now() }
     val cantidadConsumida = integer("cantidad_consumida").default(0)
+    val estatura = double("estatura").default(0.0)
+    val peso = double("peso").default(0.0)
 
     override val primaryKey = PrimaryKey(idAgua)
 

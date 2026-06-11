@@ -7,7 +7,7 @@ data class Registro(
     val id: Int? = null,
     val nombre: String,
     val primerApellido: String,
-    val segundoApellido: String,
+    val segundoApellido: String?,
     val email: String,
     val contrasena: String,
     val idRol: Int,

@@ -11,5 +11,7 @@ data class Usuario(
     val email: String? = null,
     val contrasena: String? = null,
     val idRol: Int? = null,
-    val nombreRol: String? = null
+    val nombreRol: String? = null,
+    val peso: Double? = null,
+    val estatura: Double? = null
 )

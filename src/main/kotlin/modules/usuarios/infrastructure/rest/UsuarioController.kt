@@ -4,7 +4,7 @@ import com.alilopez.modules.usuarios.application.usecase.ActualizarUseCase
 import com.alilopez.modules.usuarios.application.usecase.EliminarUseCase
 import com.alilopez.modules.usuarios.application.usecase.VerPerfilUseCase
 import com.alilopez.modules.usuarios.application.usecase.VerTodoUseCase
-import com.alilopez.modules.usuarios.domain.model.Usuario
+import com.alilopez.modules.usuarios.infrastructure.rest.dto.UsuarioRequests
 import com.alilopez.modules.usuarios.infrastructure.rest.dto.toResponse
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
@@ -24,7 +24,9 @@ class UsuarioController(
             ?: return call.respond(HttpStatusCode.BadRequest, "ID inválido")
 
         try {
-            val usuarioData = call.receive<Usuario>()
+            val request = call.receive<UsuarioRequests>()
+            val usuarioData = request.toDomain()
+
             val idAutenticado = obtenerIdSolicitante(call)
 
             val resultado = actualizarUseCase.execute(idAActualizar, usuarioData, idAutenticado)
@@ -81,8 +83,8 @@ class UsuarioController(
 
         val rutaActual = call.request.local.uri
         val filtroTipo = when {
-            rutaActual.contains("usuario") -> 1
-            rutaActual.contains("admi") -> 2
+            rutaActual.contains("admi") -> 1
+            rutaActual.contains("usuario") -> 2
             else -> -1
         }
 
@@ -95,7 +97,6 @@ class UsuarioController(
             call.respond(HttpStatusCode.InternalServerError, "Error al consultar la lista")
         }
     }
-
 
     private fun obtenerIdSolicitante(call: ApplicationCall): Int {
         val principal = call.principal<JWTPrincipal>()

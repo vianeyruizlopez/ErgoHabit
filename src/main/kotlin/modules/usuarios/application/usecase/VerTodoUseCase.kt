@@ -5,7 +5,7 @@ import com.alilopez.modules.usuarios.domain.repository.UsuarioRepository
 
 class VerTodoUseCase(private val repository: UsuarioRepository) {
     suspend fun execute(rolSolicitante: Int, filtroTipo: Int): List<Usuario> {
-        if (rolSolicitante != 2) {
+        if (rolSolicitante != 1) {
             throw SecurityException("Acceso denegado: Permisos insuficientes.")
         }
 

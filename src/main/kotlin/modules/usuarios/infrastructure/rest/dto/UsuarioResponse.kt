@@ -10,9 +10,10 @@ data class UsuarioResponse(
     val primerApellido: String,
     val segundoApellido: String,
     val email: String,
-    val contrasena: String?,
     val idRol: Int,
-    val nombreRol: String
+    val nombreRol: String,
+    val peso: Double?,
+    val estatura: Double?
 )
 
 fun Usuario.toResponse() = UsuarioResponse(
@@ -21,7 +22,8 @@ fun Usuario.toResponse() = UsuarioResponse(
     primerApellido = this.primerApellido ?: "",
     segundoApellido = this.segundoApellido ?: "",
     email = this.email ?: "",
-    contrasena = null,
     idRol = this.idRol ?: 0,
-    nombreRol = this.nombreRol ?: "Sin Rol"
+    nombreRol = this.nombreRol ?: "Sin Rol",
+    peso = this.peso,
+    estatura = this.estatura
 )

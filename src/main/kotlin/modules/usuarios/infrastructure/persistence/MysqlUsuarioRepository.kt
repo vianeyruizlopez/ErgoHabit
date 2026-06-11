@@ -13,7 +13,7 @@ class MysqlUsuarioRepository : UsuarioRepository {
         RolTable,
         joinType = JoinType.INNER,
         onColumn = UsuarioTable.idRol,
-        otherColumn = RolTable.id
+        otherColumn = RolTable.idRol
     )
 
     override suspend fun verTodos(): List<Usuario> = newSuspendedTransaction {
@@ -22,41 +22,39 @@ class MysqlUsuarioRepository : UsuarioRepository {
             .map { toDomainConRol(it) }
     }
 
-
-
     override suspend fun verPorId(id: Int): Usuario? = newSuspendedTransaction {
         UsuariosConRoles()
-            .select { UsuarioTable.id eq id }
+            .select { UsuarioTable.idUsuario eq id }
             .map { toDomainConRol(it) }
             .singleOrNull()
     }
 
-
-
-
-
-
     override suspend fun actualizar(id: Int, usuario: Usuario): Usuario? = newSuspendedTransaction {
-        val filasAfectadas = UsuarioTable.update({ UsuarioTable.id eq id }) {
-            it[nombre] = usuario.nombre !!
-            it[primerApellido] = usuario.primerApellido !!
-            it[segundoApellido] = usuario.segundoApellido !!
+        val filasAfectadas = UsuarioTable.update({ UsuarioTable.idUsuario eq id }) {
+            it[nombres] = usuario.nombre ?: ""
+            it[primerApellido] = usuario.primerApellido ?: ""
+            it[segundoApellido] = usuario.segundoApellido
+            it[correo] = usuario.email ?: ""
+            it[peso] = usuario.peso?.toBigDecimal()
+            it[estatura] = usuario.estatura?.toBigDecimal()
         }
         if (filasAfectadas > 0) verPorId(id) else null
     }
 
     override suspend fun eliminar(id: Int): Boolean = newSuspendedTransaction {
-        UsuarioTable.deleteWhere { UsuarioTable.id eq id } > 0
+        UsuarioTable.deleteWhere { UsuarioTable.idUsuario eq id } > 0
     }
 
     private fun toDomainConRol(row: ResultRow): Usuario = Usuario(
-        id = row[UsuarioTable.id],
-        nombre = row[UsuarioTable.nombre],
+        id = row[UsuarioTable.idUsuario],
+        nombre = row[UsuarioTable.nombres],
         primerApellido = row[UsuarioTable.primerApellido],
         segundoApellido = row[UsuarioTable.segundoApellido],
-        email = row[UsuarioTable.email],
-        contrasena = row[UsuarioTable.contrasena],
+        email = row[UsuarioTable.correo],
+        contrasena = row[UsuarioTable.contrasenia],
         idRol = row[UsuarioTable.idRol],
-        nombreRol = row[RolTable.nombre]
+        nombreRol = row[RolTable.nombreRol],
+        peso = row[UsuarioTable.peso]?.toDouble(),
+        estatura = row[UsuarioTable.estatura]?.toDouble()
     )
 }

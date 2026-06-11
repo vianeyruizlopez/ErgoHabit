@@ -5,7 +5,7 @@ import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.CurrentTimestamp
 import org.jetbrains.exposed.sql.javatime.timestamp
 
-object Postura : Table("historial_postura") {
+object PosturaTable : Table("historial_postura") {
 
     val idHistorial = integer("id_historial").autoIncrement()
     val idUsuario = integer("id_usuario").references(

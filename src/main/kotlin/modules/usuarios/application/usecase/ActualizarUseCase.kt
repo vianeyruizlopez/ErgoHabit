@@ -18,9 +18,10 @@ class ActualizarUseCase(private val repository: UsuarioRepository) {
             nombre = if (!usuarioData.nombre.isNullOrBlank()) usuarioData.nombre else usuarioExistente.nombre,
             primerApellido = if (!usuarioData.primerApellido.isNullOrBlank()) usuarioData.primerApellido else usuarioExistente.primerApellido,
             segundoApellido = if (!usuarioData.segundoApellido.isNullOrBlank()) usuarioData.segundoApellido else usuarioExistente.segundoApellido,
-
             email = if (!usuarioData.email.isNullOrBlank()) usuarioData.email else usuarioExistente.email,
             contrasena = if (!usuarioData.contrasena.isNullOrBlank()) usuarioData.contrasena else usuarioExistente.contrasena,
+            peso = if (usuarioData.peso != null && usuarioData.peso > 0) usuarioData.peso else usuarioExistente.peso,
+            estatura = if (usuarioData.estatura != null && usuarioData.estatura > 0) usuarioData.estatura else usuarioExistente.estatura,
             idRol = usuarioExistente.idRol
         )
 

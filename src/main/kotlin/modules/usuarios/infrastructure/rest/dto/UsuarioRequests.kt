@@ -5,21 +5,24 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UsuarioRequests(
-    val id: Int?,
-    val nombre: String,
-    val primerApellido: String,
-    val segundoApellido: String,
-    val email: String,
-    val contrasena: String?,
-    val idRol: Int
+    val id: Int? = null,
+    val nombre: String? = null,
+    val primerApellido: String? = null,
+    val segundoApellido: String? = null,
+    val email: String? = null,
+    val idRol: Int? = null,
+    val peso: Double? = null,
+    val estatura: Double? = null
 ){
-    fun toDomain()= Usuario(
+    fun toDomain() = Usuario(
         id = id ?: 0,
         nombre = nombre,
         primerApellido = primerApellido,
         segundoApellido = segundoApellido,
         email = email,
-        contrasena = contrasena,
-        idRol= idRol
+        contrasena = null,
+        idRol = idRol,
+        peso = peso,
+        estatura = estatura
     )
 }

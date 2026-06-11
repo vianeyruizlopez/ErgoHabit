@@ -5,7 +5,7 @@ import com.alilopez.modules.usuarios.domain.repository.UsuarioRepository
 class EliminarUseCase(private val repository: UsuarioRepository) {
     suspend fun execute(idAEliminar: Int, idAutenticado: Int, rolAutenticado: Int): Boolean {
 
-        val admin = (rolAutenticado == 2)
+        val admin = (rolAutenticado == 1)
         val esElMismoDueno = (idAEliminar == idAutenticado)
 
         if (!admin && !esElMismoDueno) {
