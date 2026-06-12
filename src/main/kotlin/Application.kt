@@ -2,8 +2,13 @@ package com.alilopez
 
 import com.alilopez.common.infrastructure.DatabaseFactory
 import com.alilopez.common.infrastructure.security.configureSecurity
-import com.alilopez.modules.autentificacion.infrastructure.rest.autentificacionModule
+import com.alilopez.modules.autentificacion.infrastructure.autentificacionModule
+import com.alilopez.modules.autentificacion.infrastructure.rest.AutentificacionController
 import com.alilopez.modules.autentificacion.infrastructure.rest.autentificacionRoutes
+import com.alilopez.modules.usuarioFinal.progresoDiario.infrastructure.rest.ProgresoDiarioController
+import com.alilopez.modules.usuarioFinal.progresoDiario.infrastructure.rest.progresoDiarioRouting
+import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.progresoDiarioModule
+import com.alilopez.modules.usuarios.infrastructure.rest.UsuarioController
 import com.alilopez.modules.usuarios.infrastructure.rest.usuarioRouting
 import com.alilopez.modules.usuarios.usuarioModule
 import io.ktor.http.HttpHeaders
@@ -16,9 +21,17 @@ import io.ktor.server.routing.routing
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 import io.ktor.server.plugins.cors.routing.*
+import org.koin.ktor.ext.inject
+
 fun Application.module() {
     DatabaseFactory.init()
     // 1. Configuración de Inyección de Dependencias
+
+
+    install(Koin) {
+        slf4jLogger() // Opcional: para ver logs de Koin
+        modules( usuarioModule,autentificacionModule,progresoDiarioModule)
+    }
 
     configureSecurity()
 
@@ -36,20 +49,19 @@ fun Application.module() {
         allowCredentials = true
     }
 
-    install(Koin) {
-        slf4jLogger() // Opcional: para ver logs de Koin
-        modules( usuarioModule,autentificacionModule)
-    }
 
     // 2. Configuración de Serialización (Content Negotiation)
     install(ContentNegotiation) {
         json()
     }
 
-    // 3. Registro de Rutas
-    routing {
-        usuarioRouting()
-        autentificacionRoutes()
+    val progresoDiarioController by inject<ProgresoDiarioController>()
+    val autentificacionController by inject<AutentificacionController>()
+    val usuarioController by inject<UsuarioController>()
 
+    routing {
+        usuarioRouting(usuarioController)
+        autentificacionRoutes(autentificacionController)
+        progresoDiarioRouting(progresoDiarioController)
     }
 }

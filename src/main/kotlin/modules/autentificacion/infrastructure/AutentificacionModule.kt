@@ -1,9 +1,10 @@
-package com.alilopez.modules.autentificacion.infrastructure.rest
+package com.alilopez.modules.autentificacion.infrastructure
 
 import com.alilopez.modules.autentificacion.application.usecase.LoginUseCase
 import com.alilopez.modules.autentificacion.application.usecase.RegistrarUseCase
 import com.alilopez.modules.autentificacion.domain.repository.AutentificacionRepository
 import com.alilopez.modules.autentificacion.infrastructure.persistence.AutentificacionRepositoryImpl
+import com.alilopez.modules.autentificacion.infrastructure.rest.AutentificacionController
 import org.koin.dsl.module
 
 val autentificacionModule = module {

@@ -6,7 +6,7 @@ import java.util.*
 
 object JwtConfig {
     private val secret = System.getenv("JWT_SECRET") ?: "llave_temporal_muy_larga_123"
-    private const val issuer = "com.alilopez.sarc"
+    private const val issuer = "com.alilopez.ergohabit"
     private val algorithm = Algorithm.HMAC256(secret)
 
     val verifier = JWT.require(algorithm).withIssuer(issuer).build()

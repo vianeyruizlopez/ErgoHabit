@@ -1,33 +1,33 @@
 package com.alilopez.modules.usuarios.infrastructure.rest
 
+import com.alilopez.modules.autentificacion.infrastructure.rest.AutentificacionController
 import io.ktor.server.auth.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
-fun Route.usuarioRouting() {
-    val usuarioController by inject<UsuarioController>()
+fun Route.usuarioRouting(controller: UsuarioController) {
 
     authenticate("auth-jwt") {
-        route("/usuarios") {
+        route("api/v1/usuarios") {
 
             get("/{id}") {
-                usuarioController.verPerfil(call)
+                controller.verPerfil(call)
             }
 
             get("/usuarios") {
-                usuarioController.verTodos(call)
+                controller.verTodos(call)
             }
 
             get("/administrador") {
-                usuarioController.verTodos(call)
+                controller.verTodos(call)
             }
 
             put("/{id}") {
-                usuarioController.actualizar(call)
+                controller.actualizar(call)
             }
 
             delete("/{id}") {
-                usuarioController.eliminar(call)
+                controller.eliminar(call)
             }
         }
     }
