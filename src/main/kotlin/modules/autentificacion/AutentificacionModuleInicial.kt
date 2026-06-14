@@ -1,4 +1,4 @@
-package com.alilopez.modules.autentificacion.infrastructure
+package com.alilopez.modules.autentificacion
 
 import com.alilopez.modules.autentificacion.infrastructure.rest.AutentificacionController
 import com.alilopez.modules.autentificacion.infrastructure.rest.autentificacionRoutes

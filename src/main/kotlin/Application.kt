@@ -2,11 +2,14 @@ package com.alilopez
 
 import com.alilopez.common.infrastructure.DatabaseFactory
 import com.alilopez.common.infrastructure.security.configureSecurity
-import com.alilopez.modules.autentificacion.infrastructure.autentificacionModule
+import com.alilopez.modules.autentificacion.autentificacionModule
 import com.alilopez.modules.autentificacion.infrastructure.rest.AutentificacionController
 import com.alilopez.modules.autentificacion.infrastructure.rest.autentificacionRoutes
+import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.AguaController
+import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.aguaRouter
 import com.alilopez.modules.usuarioFinal.progresoDiario.infrastructure.rest.ProgresoDiarioController
 import com.alilopez.modules.usuarioFinal.progresoDiario.infrastructure.rest.progresoDiarioRouting
+import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.aguaModule
 import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.progresoDiarioModule
 import com.alilopez.modules.usuarios.infrastructure.rest.UsuarioController
 import com.alilopez.modules.usuarios.infrastructure.rest.usuarioRouting
@@ -30,7 +33,7 @@ fun Application.module() {
 
     install(Koin) {
         slf4jLogger() // Opcional: para ver logs de Koin
-        modules( usuarioModule,autentificacionModule,progresoDiarioModule)
+        modules( usuarioModule,autentificacionModule,progresoDiarioModule,aguaModule)
     }
 
     configureSecurity()
@@ -58,10 +61,12 @@ fun Application.module() {
     val progresoDiarioController by inject<ProgresoDiarioController>()
     val autentificacionController by inject<AutentificacionController>()
     val usuarioController by inject<UsuarioController>()
+    val aguaController by inject<AguaController>()
 
     routing {
         usuarioRouting(usuarioController)
         autentificacionRoutes(autentificacionController)
         progresoDiarioRouting(progresoDiarioController)
+        aguaRouter(aguaController)
     }
 }

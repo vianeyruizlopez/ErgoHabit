@@ -1,4 +1,4 @@
-package com.alilopez.modules.autentificacion.infrastructure
+package com.alilopez.modules.autentificacion
 
 import com.alilopez.modules.autentificacion.application.usecase.LoginUseCase
 import com.alilopez.modules.autentificacion.application.usecase.RegistrarUseCase
