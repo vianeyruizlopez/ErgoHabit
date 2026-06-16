@@ -19,7 +19,6 @@ class SuenoController(
     private val registrarDespertarUseCase: RegistrarDespertarUseCase
 ) {
 
-    // 1️⃣ ENDPOINT: Ver Dashboard de Sueño (Pantalla Principal)
     suspend fun verDashboard(call: ApplicationCall, idUsuario: Int) {
         try {
             val response = verDashboarSuenoUseCase.execute(idUsuario)
@@ -29,7 +28,6 @@ class SuenoController(
         }
     }
 
-    // 2️⃣ ENDPOINT: Configurar o Modificar Horario (Popup inicial y Slider de retraso)
     suspend fun guardarHorario(call: ApplicationCall, idUsuario: Int) {
         try {
             val request = call.receive<SuenoRequest>()
@@ -49,10 +47,9 @@ class SuenoController(
         }
     }
 
-    // 3️⃣ ENDPOINT: Al presionar "Ya me levanté" en la Alarma de Android
     suspend fun registrarDespertar(call: ApplicationCall, idUsuario: Int) {
         try {
-            val horaActual = LocalTime.now() // Captura la hora exacta en la que picó el botón
+            val horaActual = LocalTime.now()
             val exito = registrarDespertarUseCase.execute(idUsuario, horaActual)
 
             if (exito) {
