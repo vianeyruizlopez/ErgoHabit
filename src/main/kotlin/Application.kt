@@ -9,8 +9,11 @@ import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.AguaController
 import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.aguaRouter
 import com.alilopez.modules.usuarioFinal.progresoDiario.infrastructure.rest.ProgresoDiarioController
 import com.alilopez.modules.usuarioFinal.progresoDiario.infrastructure.rest.progresoDiarioRouting
+import com.alilopez.modules.usuarioFinal.sueno.infrastructure.rest.SuenoController
+import com.alilopez.modules.usuarioFinal.sueno.infrastructure.rest.suenoRouter
 import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.aguaModule
 import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.progresoDiarioModule
+import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.suenoModule
 import com.alilopez.modules.usuarios.infrastructure.rest.UsuarioController
 import com.alilopez.modules.usuarios.infrastructure.rest.usuarioRouting
 import com.alilopez.modules.usuarios.usuarioModule
@@ -33,7 +36,7 @@ fun Application.module() {
 
     install(Koin) {
         slf4jLogger() // Opcional: para ver logs de Koin
-        modules( usuarioModule,autentificacionModule,progresoDiarioModule,aguaModule)
+        modules( usuarioModule,autentificacionModule,progresoDiarioModule,aguaModule,suenoModule)
     }
 
     configureSecurity()
@@ -62,11 +65,13 @@ fun Application.module() {
     val autentificacionController by inject<AutentificacionController>()
     val usuarioController by inject<UsuarioController>()
     val aguaController by inject<AguaController>()
+    val suenoController by inject<SuenoController>()
 
     routing {
         usuarioRouting(usuarioController)
         autentificacionRoutes(autentificacionController)
         progresoDiarioRouting(progresoDiarioController)
         aguaRouter(aguaController)
+        suenoRouter(suenoController)
     }
 }
