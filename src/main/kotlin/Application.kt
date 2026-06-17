@@ -7,6 +7,8 @@ import com.alilopez.modules.autentificacion.infrastructure.rest.AutentificacionC
 import com.alilopez.modules.autentificacion.infrastructure.rest.autentificacionRoutes
 import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.AguaController
 import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.aguaRouter
+import com.alilopez.modules.usuarioFinal.ejercicio.infrastructure.rest.EjercicioController
+import com.alilopez.modules.usuarioFinal.ejercicio.infrastructure.rest.ejercicioRouter
 import com.alilopez.modules.usuarioFinal.nutricion.infrastructure.rest.NutricionController
 import com.alilopez.modules.usuarioFinal.nutricion.infrastructure.rest.nutricionRouter
 import com.alilopez.modules.usuarioFinal.progresoDiario.infrastructure.rest.ProgresoDiarioController
@@ -14,6 +16,7 @@ import com.alilopez.modules.usuarioFinal.progresoDiario.infrastructure.rest.prog
 import com.alilopez.modules.usuarioFinal.sueno.infrastructure.rest.SuenoController
 import com.alilopez.modules.usuarioFinal.sueno.infrastructure.rest.suenoRouter
 import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.aguaModule
+import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.ejercicioModule
 import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.nutricionModule
 import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.progresoDiarioModule
 import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.suenoModule
@@ -39,7 +42,14 @@ fun Application.module() {
 
     install(Koin) {
         slf4jLogger() // Opcional: para ver logs de Koin
-        modules( usuarioModule,autentificacionModule,progresoDiarioModule,aguaModule,suenoModule, nutricionModule)
+        modules(
+            usuarioModule,
+            autentificacionModule,
+            progresoDiarioModule,
+            aguaModule,suenoModule,
+            nutricionModule,
+            ejercicioModule,
+            )
     }
 
     configureSecurity()
@@ -70,6 +80,7 @@ fun Application.module() {
     val aguaController by inject<AguaController>()
     val suenoController by inject<SuenoController>()
     val nutricionController by inject<NutricionController>()
+    val ejercicioController by inject<EjercicioController>()
 
     routing {
         usuarioRouting(usuarioController)
@@ -78,5 +89,6 @@ fun Application.module() {
         aguaRouter(aguaController)
         suenoRouter(suenoController)
         nutricionRouter(nutricionController)
+        ejercicioRouter(ejercicioController)
     }
 }
