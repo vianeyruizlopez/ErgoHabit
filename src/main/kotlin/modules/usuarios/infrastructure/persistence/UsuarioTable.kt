@@ -14,6 +14,7 @@ object UsuarioTable : Table("usuarios") {
     val contrasenia = varchar("contrasenia", 255)
     val peso = decimal("peso", 5, 2).nullable()
     val estatura = decimal("estatura", 3, 2).nullable()
+    val fotoUrl = varchar("foto_url", 255).nullable()
 
 
     override val primaryKey = PrimaryKey(idUsuario)

@@ -1,13 +1,16 @@
 package com.alilopez.modules.usuarios.infrastructure.persistence
 
 import com.alilopez.modules.catalogosRol.infrastructure.persistence.RolTable
+import com.alilopez.modules.usuarios.CloudinaryService
 import com.alilopez.modules.usuarios.domain.model.Usuario
 import com.alilopez.modules.usuarios.domain.repository.UsuarioRepository
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import java.io.InputStream
 
-class MysqlUsuarioRepository : UsuarioRepository {
+class MysqlUsuarioRepository(private val cloudinaryService: CloudinaryService
+) : UsuarioRepository {
 
     private fun UsuariosConRoles() = UsuarioTable.join(
         RolTable,
@@ -41,6 +44,16 @@ class MysqlUsuarioRepository : UsuarioRepository {
         if (filasAfectadas > 0) verPorId(id) else null
     }
 
+    override suspend fun actualizarFotoPerfil(idUsuario: Int, imagenStream: InputStream): String? = newSuspendedTransaction {
+        val urlSegura = cloudinaryService.uploadImage(imagenStream) ?: return@newSuspendedTransaction null
+
+        val filasAfectadas = UsuarioTable.update({ UsuarioTable.idUsuario eq idUsuario }) {
+            it[this.fotoUrl] = urlSegura
+        }
+
+        if (filasAfectadas > 0) urlSegura else null
+    }
+
     override suspend fun eliminar(id: Int): Boolean = newSuspendedTransaction {
         UsuarioTable.deleteWhere { UsuarioTable.idUsuario eq id } > 0
     }
@@ -55,6 +68,7 @@ class MysqlUsuarioRepository : UsuarioRepository {
         idRol = row[UsuarioTable.idRol],
         nombreRol = row[RolTable.nombreRol],
         peso = row[UsuarioTable.peso]?.toDouble(),
-        estatura = row[UsuarioTable.estatura]?.toDouble()
+        estatura = row[UsuarioTable.estatura]?.toDouble(),
+        fotoUrl = row[UsuarioTable.fotoUrl]
     )
 }

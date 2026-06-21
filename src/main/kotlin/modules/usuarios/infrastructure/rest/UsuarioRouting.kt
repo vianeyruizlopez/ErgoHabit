@@ -29,6 +29,10 @@ fun Route.usuarioRouting(controller: UsuarioController) {
             delete("/{id}") {
                 controller.eliminar(call)
             }
+            patch("/perfil/foto") {
+                controller.actualizarFotoPerfil(call)
+            }
         }
+
     }
 }

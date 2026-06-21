@@ -1,5 +1,6 @@
 package com.alilopez.modules.usuarios
 
+import com.alilopez.modules.usuarios.application.usecase.ActualizarFotoPerfilUseCase
 import com.alilopez.modules.usuarios.application.usecase.ActualizarUseCase
 import com.alilopez.modules.usuarios.application.usecase.EliminarUseCase
 import com.alilopez.modules.usuarios.application.usecase.VerPerfilUseCase
@@ -14,6 +15,14 @@ val usuarioModule = module {
     factory { EliminarUseCase(get()) }
     factory { VerPerfilUseCase(get()) }
     factory { VerTodoUseCase(get()) }
-    factory { UsuarioController(get(), get(), get(), get()) }
-    single<UsuarioRepository> { MysqlUsuarioRepository() }
+    factory { ActualizarFotoPerfilUseCase(get()) }
+    factory {
+        UsuarioController(get(),
+        get(),
+        get(),
+        get(),
+        get())
+    }
+    single { CloudinaryService() }
+    single<UsuarioRepository> { MysqlUsuarioRepository(get()) }
 }

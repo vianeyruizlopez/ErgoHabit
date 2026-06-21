@@ -13,5 +13,6 @@ data class Usuario(
     val idRol: Int? = null,
     val nombreRol: String? = null,
     val peso: Double? = null,
-    val estatura: Double? = null
+    val estatura: Double? = null,
+    val fotoUrl: String? = null
 )

@@ -4,20 +4,24 @@ import com.alilopez.modules.usuarios.application.usecase.ActualizarUseCase
 import com.alilopez.modules.usuarios.application.usecase.EliminarUseCase
 import com.alilopez.modules.usuarios.application.usecase.VerPerfilUseCase
 import com.alilopez.modules.usuarios.application.usecase.VerTodoUseCase
+import com.alilopez.modules.usuarios.application.usecase.ActualizarFotoPerfilUseCase
 import com.alilopez.modules.usuarios.infrastructure.rest.dto.UsuarioRequests
 import com.alilopez.modules.usuarios.infrastructure.rest.dto.toResponse
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.*
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
+import io.ktor.server.request.receiveMultipart
 import io.ktor.server.response.respond
 
 class UsuarioController(
     private val actualizarUseCase: ActualizarUseCase,
     private val eliminarUseCase: EliminarUseCase,
     private val verPerfilUseCase: VerPerfilUseCase,
-    private val verTodoUseCase: VerTodoUseCase
+    private val verTodoUseCase: VerTodoUseCase,
+    private val actualizarFotoPerfilUseCase: ActualizarFotoPerfilUseCase
 ) {
     suspend fun actualizar(call: ApplicationCall) {
         val idAActualizar = call.parameters["id"]?.toIntOrNull()
@@ -38,6 +42,44 @@ class UsuarioController(
             call.respond(HttpStatusCode.NotFound, e.message ?: "No encontrado")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError, "Error al actualizar")
+        }
+    }
+
+    suspend fun actualizarFotoPerfil(call: ApplicationCall) {
+        val idAutenticado = obtenerIdSolicitante(call)
+        if (idAutenticado == 0) {
+            return call.respond(HttpStatusCode.Unauthorized, "Token inválido o expirado")
+        }
+
+        try {
+            val multipart = call.receiveMultipart()
+            var urlFotoResultante: String? = null
+
+            multipart.forEachPart { part ->
+                if (part is PartData.FileItem) {
+                    part.streamProvider().use { inputStream ->
+                        urlFotoResultante = actualizarFotoPerfilUseCase.ejecutar(idAutenticado, inputStream)
+                    }
+                }
+                part.dispose()
+            }
+
+            if (urlFotoResultante != null) {
+                call.respond(
+                    HttpStatusCode.OK,
+                    mapOf("mensaje" to "Foto de perfil actualizada con éxito", "url" to urlFotoResultante)
+                )
+            } else {
+                call.respond(HttpStatusCode.BadRequest, "No se proporcionó ningún archivo de imagen válido")
+            }
+
+        } catch (e: IllegalArgumentException) {
+            call.respond(HttpStatusCode.BadRequest, e.message ?: "Datos inválidos")
+        } catch (e: SecurityException) {
+            call.respond(HttpStatusCode.Forbidden, e.message ?: "No autorizado")
+        } catch (e: Exception) {
+            e.printStackTrace()
+            call.respond(HttpStatusCode.InternalServerError, "Error del servidor al procesar la foto de perfil")
         }
     }
 

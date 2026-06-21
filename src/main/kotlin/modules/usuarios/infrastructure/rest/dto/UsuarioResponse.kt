@@ -13,7 +13,8 @@ data class UsuarioResponse(
     val idRol: Int,
     val nombreRol: String,
     val peso: Double?,
-    val estatura: Double?
+    val estatura: Double?,
+    val fotoUrl: String?
 )
 
 fun Usuario.toResponse() = UsuarioResponse(
@@ -25,5 +26,6 @@ fun Usuario.toResponse() = UsuarioResponse(
     idRol = this.idRol ?: 0,
     nombreRol = this.nombreRol ?: "Sin Rol",
     peso = this.peso,
-    estatura = this.estatura
+    estatura = this.estatura,
+    fotoUrl = this.fotoUrl
 )
