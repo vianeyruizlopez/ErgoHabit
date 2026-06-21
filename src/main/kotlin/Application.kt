@@ -15,11 +15,14 @@ import com.alilopez.modules.usuarioFinal.progresoDiario.infrastructure.rest.Prog
 import com.alilopez.modules.usuarioFinal.progresoDiario.infrastructure.rest.progresoDiarioRouting
 import com.alilopez.modules.usuarioFinal.sueno.infrastructure.rest.SuenoController
 import com.alilopez.modules.usuarioFinal.sueno.infrastructure.rest.suenoRouter
+import com.alilopez.modules.usuarioFinal.tarea.infrastructure.rest.TareaController
+import com.alilopez.modules.usuarioFinal.tarea.infrastructure.rest.tareaRouter
 import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.aguaModule
 import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.ejercicioModule
 import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.nutricionModule
 import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.progresoDiarioModule
 import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.suenoModule
+import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.tareaModule
 import com.alilopez.modules.usuarios.infrastructure.rest.UsuarioController
 import com.alilopez.modules.usuarios.infrastructure.rest.usuarioRouting
 import com.alilopez.modules.usuarios.usuarioModule
@@ -49,6 +52,7 @@ fun Application.module() {
             aguaModule,suenoModule,
             nutricionModule,
             ejercicioModule,
+            tareaModule
             )
     }
 
@@ -81,6 +85,7 @@ fun Application.module() {
     val suenoController by inject<SuenoController>()
     val nutricionController by inject<NutricionController>()
     val ejercicioController by inject<EjercicioController>()
+    val tareaController by inject<TareaController>()
 
     routing {
         usuarioRouting(usuarioController)
@@ -90,5 +95,6 @@ fun Application.module() {
         suenoRouter(suenoController)
         nutricionRouter(nutricionController)
         ejercicioRouter(ejercicioController)
+        tareaRouter(tareaController)
     }
 }
