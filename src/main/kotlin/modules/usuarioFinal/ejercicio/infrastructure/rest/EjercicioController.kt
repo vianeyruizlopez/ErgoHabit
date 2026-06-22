@@ -7,6 +7,7 @@ import com.alilopez.modules.usuarioFinal.ejercicio.infrastructure.rest.dto.MetaE
 import com.alilopez.modules.usuarioFinal.ejercicio.infrastructure.rest.dto.RegistrarKmRequest
 import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.dto.MensajeResponse
 import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.dto.ErrorResponse
+import com.alilopez.modules.usuarioFinal.ejercicio.application.usecase.ObtenerProgresoEjercicioUseCase
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -16,8 +17,9 @@ import java.math.BigDecimal
 class EjercicioController(
     private val configurarMetaUseCase: ConfigurarMetaEjercicioUseCase,
     private val registrarKilometrosUseCase: RegistrarKilometrosUseCase,
-    private val verDashboardUseCase: VerDashboardEjercicioUseCase
-) {
+    private val verDashboardUseCase: VerDashboardEjercicioUseCase,
+    private val obtenerProgresoEjercicioUseCase: ObtenerProgresoEjercicioUseCase
+    ) {
 
     suspend fun verDashboard(call: ApplicationCall, idUsuario: Int) {
         try {
@@ -25,6 +27,15 @@ class EjercicioController(
             call.respond(HttpStatusCode.OK, response)
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Error: ${e.localizedMessage}"))
+        }
+    }
+
+    suspend fun verProgresoSemanal(call: ApplicationCall, idUsuario: Int) {
+        try {
+            val response = obtenerProgresoEjercicioUseCase.ejecutar(idUsuario)
+            call.respond(HttpStatusCode.OK, response)
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Error al obtener el progreso semanal: ${e.localizedMessage}"))
         }
     }
 

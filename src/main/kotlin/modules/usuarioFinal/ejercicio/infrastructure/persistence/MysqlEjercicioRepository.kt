@@ -17,6 +17,26 @@ class MysqlEjercicioRepository : EjercicioRepository {
             .singleOrNull() ?: BigDecimal("8.0")
     }
 
+    override fun obtenerHistorialSemanal(idUsuario: Int, desdeFecha: LocalDate): Map<LocalDate, Double> = transaction {
+        val mapa = mutableMapOf<LocalDate, Double>()
+
+        val query = """
+        SELECT DATE(fecha) as fecha_dia, SUM(km_recorridos) as total_km 
+        FROM progreso_ejercicio 
+        WHERE id_usuario = $idUsuario AND fecha >= '$desdeFecha' 
+        GROUP BY fecha_dia
+    """.trimIndent()
+
+        exec(query) { rs ->
+            while (rs.next()) {
+                val fechaDb = rs.getDate("fecha_dia").toLocalDate()
+                val totalKm = rs.getDouble("total_km")
+                mapa[fechaDb] = totalKm
+            }
+        }
+        mapa
+    }
+
     override fun actualizarMetaKilometros(idUsuario: Int, nuevaMeta: BigDecimal) {
         transaction {
             val existe = ConfiguracionHabitos.select { ConfiguracionHabitos.idUsuario eq idUsuario }.singleOrNull()

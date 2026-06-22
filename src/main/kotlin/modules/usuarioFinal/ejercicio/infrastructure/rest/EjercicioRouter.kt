@@ -17,6 +17,12 @@ fun Route.ejercicioRouter(controller: EjercicioController) {
                 controller.verDashboard(call, idUsuario)
             }
 
+            get("/progreso-semanal") {
+                val (idUsuario, idRol) = extraerTokenEjercicio(call)
+                if (idRol != 2) return@get call.respond(HttpStatusCode.Forbidden, ErrorResponse("Rol insuficiente."))
+                controller.verProgresoSemanal(call, idUsuario)
+            }
+
             put("/meta") {
                 val (idUsuario, idRol) = extraerTokenEjercicio(call)
                 if (idRol != 2) return@put call.respond(HttpStatusCode.Forbidden, ErrorResponse("Acceso exclusivo para estudiantes."))

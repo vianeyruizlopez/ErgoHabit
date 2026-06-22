@@ -2,6 +2,7 @@ package com.alilopez.modules.usuarioTester.habitos.infrastructure.rest
 
 import com.alilopez.modules.usuarioFinal.agua.application.usecase.ConfigurarMetaUseCase
 import com.alilopez.modules.usuarioFinal.agua.application.usecase.ObtenerDashboardAguaUseCase
+import com.alilopez.modules.usuarioFinal.agua.application.usecase.ObtenerProgresoAguaUseCase
 import com.alilopez.modules.usuarioFinal.agua.application.usecase.RegistrarTomaAguaUseCase
 import com.alilopez.modules.usuarioFinal.agua.domain.repository.AguaRepository
 import com.alilopez.modules.usuarioFinal.agua.infrastructure.persistence.MysqlAguaRepository
@@ -13,5 +14,6 @@ val aguaModule = module {
     factory { ObtenerDashboardAguaUseCase(get()) }
     factory { RegistrarTomaAguaUseCase(get()) }
     factory { ConfigurarMetaUseCase(get()) }
-    factory { AguaController(get(), get(), get()) }
+    factory { ObtenerProgresoAguaUseCase(get()) }
+    factory { AguaController(get(), get(), get(),get()) }
 }

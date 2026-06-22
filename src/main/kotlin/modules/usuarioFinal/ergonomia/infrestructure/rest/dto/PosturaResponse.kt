@@ -15,3 +15,16 @@ fun Postura.toResponse() = PosturaResponse(
     fecha = this.fecha.toString(),
     totalAlertas = this.totalAlertas
 )
+
+@Serializable
+data class ElementoGraficaPostura(
+    val diaSemana: String,
+    val totalAlertas: Int,
+    val esHoy: Boolean
+)
+
+@Serializable
+data class ProgresoPosturaResponse(
+    val mensajeMeta: String,
+    val datosGrafica: List<ElementoGraficaPostura>
+)

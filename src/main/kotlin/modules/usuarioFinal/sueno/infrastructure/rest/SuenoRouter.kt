@@ -18,6 +18,13 @@ fun Route.suenoRouter(controller: SuenoController) {
                 controller.verDashboard(call, idUsuario)
             }
 
+            get("/progreso-semanal") {
+                val (idUsuario, idRol) = extraerToken(call)
+                if (idRol != 2) return@get call.respond(HttpStatusCode.Forbidden, ErrorResponse("Acceso Denegado"))
+
+                controller.verProgresoSemanal(call, idUsuario)
+            }
+
             put("/horario") {
                 val (idUsuario, idRol) = extraerToken(call)
                 if (idRol != 2) return@put call.respond(HttpStatusCode.Forbidden, ErrorResponse("Acceso Denegado"))

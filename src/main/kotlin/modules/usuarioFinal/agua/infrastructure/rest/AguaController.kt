@@ -2,6 +2,7 @@ package com.alilopez.modules.usuarioFinal.agua.infrastructure.rest
 
 import com.alilopez.modules.usuarioFinal.agua.application.usecase.ConfigurarMetaUseCase
 import com.alilopez.modules.usuarioFinal.agua.application.usecase.ObtenerDashboardAguaUseCase
+import com.alilopez.modules.usuarioFinal.agua.application.usecase.ObtenerProgresoAguaUseCase
 import com.alilopez.modules.usuarioFinal.agua.application.usecase.RegistrarTomaAguaUseCase
 import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.dto.*
 import io.ktor.http.*
@@ -12,11 +13,21 @@ import io.ktor.server.response.*
 class AguaController(
     private val obtenerDashboardUseCase: ObtenerDashboardAguaUseCase,
     private val registrarTomaUseCase: RegistrarTomaAguaUseCase,
-    private val configurarMetaUseCase: ConfigurarMetaUseCase
+    private val configurarMetaUseCase: ConfigurarMetaUseCase,
+    private val obtenerProgresoAguaUseCase: ObtenerProgresoAguaUseCase
 ) {
     suspend fun verDashboard(call: ApplicationCall, idUsuarioAutenticado: Int) {
         val dashboard = obtenerDashboardUseCase.execute(idUsuarioAutenticado)
         call.respond(HttpStatusCode.OK, dashboard)
+    }
+
+    suspend fun verProgresoSemanal(call: ApplicationCall, idUsuarioAutenticado: Int) {
+        try {
+            val response = obtenerProgresoAguaUseCase.ejecutar(idUsuarioAutenticado)
+            call.respond(HttpStatusCode.OK, response)
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Error al obtener el progreso semanal: ${e.localizedMessage}"))
+        }
     }
 
     suspend fun registrarToma(call: ApplicationCall, idUsuarioAutenticado: Int) {

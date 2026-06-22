@@ -3,6 +3,7 @@ package com.alilopez.modules.usuarioTester.habitos.infrastructure.rest
 import com.alilopez.modules.usuarioFinal.agua.application.usecase.RegistrarTomaAguaUseCase
 import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.AguaController
 import com.alilopez.modules.usuarioFinal.sueno.application.usecase.ConfigurarHorarioSuenoUseCase
+import com.alilopez.modules.usuarioFinal.sueno.application.usecase.ObtenerProgresoSuenoUseCase
 import com.alilopez.modules.usuarioFinal.sueno.application.usecase.RegistrarDespertarUseCase
 import com.alilopez.modules.usuarioFinal.sueno.application.usecase.VerDashboarSuenoUseCase
 import com.alilopez.modules.usuarioFinal.sueno.domain.repository.SuenoRepository
@@ -15,5 +16,6 @@ val suenoModule=module {
     factory { ConfigurarHorarioSuenoUseCase(get()) }
     factory { RegistrarDespertarUseCase(get()) }
     factory { VerDashboarSuenoUseCase(get()) }
-    factory { SuenoController(get(), get(), get()) }
+    factory { ObtenerProgresoSuenoUseCase(get()) }
+    factory { SuenoController(get(), get(), get(),get()) }
 }

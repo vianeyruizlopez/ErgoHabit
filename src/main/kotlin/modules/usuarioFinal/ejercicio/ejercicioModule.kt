@@ -1,6 +1,7 @@
 package com.alilopez.modules.usuarioTester.habitos.infrastructure.rest
 
 import com.alilopez.modules.usuarioFinal.ejercicio.application.usecase.ConfigurarMetaEjercicioUseCase
+import com.alilopez.modules.usuarioFinal.ejercicio.application.usecase.ObtenerProgresoEjercicioUseCase
 import com.alilopez.modules.usuarioFinal.ejercicio.application.usecase.RegistrarKilometrosUseCase
 import com.alilopez.modules.usuarioFinal.ejercicio.application.usecase.VerDashboardEjercicioUseCase
 import com.alilopez.modules.usuarioFinal.ejercicio.domain.repository.EjercicioRepository
@@ -17,7 +18,9 @@ val ejercicioModule = module {
     factory { ConfigurarMetaEjercicioUseCase(get()) }
     factory { RegistrarKilometrosUseCase(get()) }
     factory { VerDashboardEjercicioUseCase(get()) }
-    factory { EjercicioController(get(), get(), get()) }
+    factory { ObtenerProgresoEjercicioUseCase(get()) }
+
+    factory { EjercicioController(get(), get(), get(),get()) }
 }
 fun Application.ejercicioModuleInicio() {
     val controller by inject<EjercicioController>()

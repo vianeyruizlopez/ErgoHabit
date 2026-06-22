@@ -15,6 +15,10 @@ fun Route.posturaRouter(controller: PosturaController) {
             get("/historial") {
                 controller.verHistorial(call)
             }
+
+            get("/progreso-semanal") {
+                controller.obtenerProgresoSemanal(call)
+            }
         }
     }
 }

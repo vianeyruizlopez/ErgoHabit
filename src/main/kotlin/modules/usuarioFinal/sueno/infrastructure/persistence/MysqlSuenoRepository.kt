@@ -83,4 +83,17 @@ class MysqlSuenoRepository : SuenoRepository {
             .singleOrNull()
     }
 
+    override fun obtenerHistorialSemanl(idUsuario: Int, desdeFecha: LocalDate): Map<LocalDate, Double> = transaction {
+        val mapa = mutableMapOf<LocalDate, Double>()
+
+        exec("SELECT DATE(fecha) as fecha_dia, horas_dormidas FROM progreso_sueno WHERE id_usuario = $idUsuario AND fecha >= '$desdeFecha'") { rs ->
+            while (rs.next()) {
+                val fechaDb = rs.getDate("fecha_dia").toLocalDate()
+                val horas = rs.getDouble("horas_dormidas")
+                mapa[fechaDb] = horas
+            }
+        }
+        mapa
+    }
+
 }

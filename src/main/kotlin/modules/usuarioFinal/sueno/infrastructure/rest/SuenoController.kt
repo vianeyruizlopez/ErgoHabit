@@ -5,6 +5,7 @@ import com.alilopez.modules.usuarioFinal.sueno.application.usecase.RegistrarDesp
 import com.alilopez.modules.usuarioFinal.sueno.infrastructure.rest.dto.SuenoRequest
 import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.dto.MensajeResponse
 import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.dto.ErrorResponse
+import com.alilopez.modules.usuarioFinal.sueno.application.usecase.ObtenerProgresoSuenoUseCase
 import com.alilopez.modules.usuarioFinal.sueno.application.usecase.VerDashboarSuenoUseCase
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -16,7 +17,8 @@ import java.time.format.DateTimeParseException
 class SuenoController(
     private val configurarHorarioUseCase: ConfigurarHorarioSuenoUseCase,
     private val verDashboarSuenoUseCase: VerDashboarSuenoUseCase,
-    private val registrarDespertarUseCase: RegistrarDespertarUseCase
+    private val registrarDespertarUseCase: RegistrarDespertarUseCase,
+    private val obtenerProgresoSuenoUseCase: ObtenerProgresoSuenoUseCase
 ) {
 
     suspend fun verDashboard(call: ApplicationCall, idUsuario: Int) {
@@ -25,6 +27,16 @@ class SuenoController(
             call.respond(HttpStatusCode.OK, response)
         } catch (e: Exception) {
             call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Error al obtener dashboard: ${e.localizedMessage}"))
+        }
+    }
+
+    suspend fun verProgresoSemanal(call: ApplicationCall, idUsuario: Int) {
+        try {
+            val response = obtenerProgresoSuenoUseCase.ejecutar(idUsuario)
+            call.respond(HttpStatusCode.OK, response)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Error al obtener progreso semanal: ${e.localizedMessage}"))
         }
     }
 

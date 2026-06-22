@@ -11,3 +11,17 @@ data class SuenoResponse(
     val horaDespertarConfigurada: String,
     val porcentajeCumplimiento: Int
 )
+@Serializable
+data class ElementoBarraGrafica(
+    val diaSemana: String,
+    val valor: Double,
+    val metaCumplida: Boolean,
+    val esHoy: Boolean
+)
+
+@Serializable
+data class HistorialHabitoResponse(
+    val tituloSeccion: String,
+    val mensajeMeta: String,
+    val datosGrafica: List<ElementoBarraGrafica>
+)

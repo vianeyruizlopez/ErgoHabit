@@ -1,5 +1,6 @@
 package com.alilopez.modules.usuarioFinal.ergonomia.infrastructure.rest
 
+import com.alilopez.modules.usuarioFinal.ergonomia.application.usecase.ObtenerProgresoSemanalUseCase
 import com.alilopez.modules.usuarioFinal.ergonomia.application.usecase.RegistrarPosturaUseCase
 import com.alilopez.modules.usuarioFinal.ergonomia.application.usecase.VerHistorialPosturaUseCase
 import com.alilopez.modules.usuarioFinal.ergonomia.infrestructure.rest.dto.RegistroPosturaRequest
@@ -13,7 +14,8 @@ import io.ktor.server.response.*
 
 class PosturaController(
     private val registrarPosturaUseCase: RegistrarPosturaUseCase,
-    private val verHistorialPosturaUseCase: VerHistorialPosturaUseCase
+    private val verHistorialPosturaUseCase: VerHistorialPosturaUseCase,
+    private val obtenerProgresoSemanalUseCase: ObtenerProgresoSemanalUseCase
 ) {
 
     suspend fun sincronizarAlertas(call: ApplicationCall) {
@@ -58,6 +60,21 @@ class PosturaController(
         } catch (e: Exception) {
             e.printStackTrace()
             call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Error al obtener el historial de ergonomía."))
+        }
+    }
+
+    suspend fun obtenerProgresoSemanal(call: ApplicationCall) {
+        val idAutenticado = obtenerIdSolicitante(call)
+        if (idAutenticado == 0) {
+            return call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Token inválido o expirado."))
+        }
+
+        try {
+            val progreso = obtenerProgresoSemanalUseCase.ejecutar(idAutenticado)
+            call.respond(HttpStatusCode.OK, progreso)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Error al procesar la gráfica de progreso."))
         }
     }
 

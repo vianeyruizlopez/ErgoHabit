@@ -24,6 +24,19 @@ fun Route.aguaRouter(controller: AguaController) {
                 controller.verDashboard(call, idUsuario)
             }
 
+            get("/progreso-semanal") {
+                val principal = call.principal<JWTPrincipal>()
+                val idUsuario = principal?.payload?.getClaim("idUsuario")?.asInt() ?: 0
+                val idRol = principal?.payload?.getClaim("idRol")?.asInt() ?: 0
+
+                if (idRol != 2) {
+                    call.respond(HttpStatusCode.Forbidden, ErrorResponse("Acceso denegado."))
+                    return@get
+                }
+
+                controller.verProgresoSemanal(call, idUsuario)
+            }
+
             post("/toma") {
                 val principal = call.principal<JWTPrincipal>()
                 val idUsuario = principal?.payload?.getClaim("idUsuario")?.asInt() ?: 0

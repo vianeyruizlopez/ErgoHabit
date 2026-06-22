@@ -21,7 +21,7 @@ class MysqlAguaRepository : AguaRepository {
             .map { it[ConfiguracionHabitos.metaAgua] }
             .singleOrNull() ?: 2450
 
-//progreso del dia
+
         val progresoRow = ProgresoAguaTable
             .select { (ProgresoAguaTable.idUsuario eq idUsuario) and (ProgresoAguaTable.fecha eq hoy) }
             .singleOrNull()
@@ -142,5 +142,16 @@ class MysqlAguaRepository : AguaRepository {
         }
 
         true
+    }
+    override fun obtenerHistorialSemanal(idUsuario: Int, desdeFecha: LocalDate): Map<LocalDate, Int> = transaction {
+        val mapa = mutableMapOf<LocalDate, Int>()
+        exec("SELECT DATE(fecha) as fecha_dia, SUM(cantidad_consumida) as total_ml FROM progreso_agua WHERE id_usuario = $idUsuario AND fecha >= '$desdeFecha' GROUP BY fecha_dia") { rs ->
+            while (rs.next()) {
+                val fechaDb = rs.getDate("fecha_dia").toLocalDate()
+                val totalMl = rs.getInt("total_ml")
+                mapa[fechaDb] = totalMl
+            }
+        }
+        mapa
     }
 }

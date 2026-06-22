@@ -1,5 +1,6 @@
 package com.alilopez.modules.usuarioTester.ergonomia.infrestructure.rest
 
+import com.alilopez.modules.usuarioFinal.ergonomia.application.usecase.ObtenerProgresoSemanalUseCase
 import com.alilopez.modules.usuarioFinal.ergonomia.application.usecase.RegistrarPosturaUseCase
 import com.alilopez.modules.usuarioFinal.ergonomia.application.usecase.VerHistorialPosturaUseCase
 import com.alilopez.modules.usuarioFinal.ergonomia.domain.repository.PosturaRepository
@@ -16,10 +17,13 @@ val posturaModule = module {
     single<PosturaRepository> { MysqlPosturaRepository() }
     factory { RegistrarPosturaUseCase(get()) }
     factory { VerHistorialPosturaUseCase(get()) }
+    factory { ObtenerProgresoSemanalUseCase(get()) }
+
     factory {
         PosturaController(
             registrarPosturaUseCase = get<RegistrarPosturaUseCase>(),
-            verHistorialPosturaUseCase = get<VerHistorialPosturaUseCase>()
+            verHistorialPosturaUseCase = get<VerHistorialPosturaUseCase>(),
+            obtenerProgresoSemanalUseCase = get()
         )
     }
 }
