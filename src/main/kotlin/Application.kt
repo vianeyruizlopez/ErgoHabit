@@ -9,6 +9,8 @@ import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.AguaController
 import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.aguaRouter
 import com.alilopez.modules.usuarioFinal.ejercicio.infrastructure.rest.EjercicioController
 import com.alilopez.modules.usuarioFinal.ejercicio.infrastructure.rest.ejercicioRouter
+import com.alilopez.modules.usuarioFinal.ergonomia.infrastructure.rest.PosturaController
+import com.alilopez.modules.usuarioFinal.ergonomia.infrastructure.rest.posturaRouter
 import com.alilopez.modules.usuarioFinal.nutricion.infrastructure.rest.NutricionController
 import com.alilopez.modules.usuarioFinal.nutricion.infrastructure.rest.nutricionRouter
 import com.alilopez.modules.usuarioFinal.progresoDiario.infrastructure.rest.ProgresoDiarioController
@@ -17,6 +19,7 @@ import com.alilopez.modules.usuarioFinal.sueno.infrastructure.rest.SuenoControll
 import com.alilopez.modules.usuarioFinal.sueno.infrastructure.rest.suenoRouter
 import com.alilopez.modules.usuarioFinal.tarea.infrastructure.rest.TareaController
 import com.alilopez.modules.usuarioFinal.tarea.infrastructure.rest.tareaRouter
+import com.alilopez.modules.usuarioTester.ergonomia.infrestructure.rest.posturaModule
 import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.aguaModule
 import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.ejercicioModule
 import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.nutricionModule
@@ -52,7 +55,8 @@ fun Application.module() {
             aguaModule,suenoModule,
             nutricionModule,
             ejercicioModule,
-            tareaModule
+            tareaModule,
+            posturaModule
             )
     }
 
@@ -86,6 +90,7 @@ fun Application.module() {
     val nutricionController by inject<NutricionController>()
     val ejercicioController by inject<EjercicioController>()
     val tareaController by inject<TareaController>()
+    val posturaController by inject<PosturaController>()
 
     routing {
         usuarioRouting(usuarioController)
@@ -96,5 +101,6 @@ fun Application.module() {
         nutricionRouter(nutricionController)
         ejercicioRouter(ejercicioController)
         tareaRouter(tareaController)
+        posturaRouter(posturaController)
     }
 }

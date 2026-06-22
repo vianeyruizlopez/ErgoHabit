@@ -1,0 +1,30 @@
+package com.alilopez.modules.usuarioTester.ergonomia.infrestructure.rest
+
+import com.alilopez.modules.usuarioFinal.ergonomia.application.usecase.RegistrarPosturaUseCase
+import com.alilopez.modules.usuarioFinal.ergonomia.application.usecase.VerHistorialPosturaUseCase
+import com.alilopez.modules.usuarioFinal.ergonomia.domain.repository.PosturaRepository
+import com.alilopez.modules.usuarioFinal.ergonomia.infrastructure.persistence.MysqlPosturaRepository
+import com.alilopez.modules.usuarioFinal.ergonomia.infrastructure.rest.PosturaController
+import com.alilopez.modules.usuarioFinal.ergonomia.infrastructure.rest.posturaRouter
+import io.ktor.server.application.Application
+import io.ktor.server.routing.routing
+import org.koin.dsl.module
+import org.koin.ktor.ext.inject
+import kotlin.getValue
+
+val posturaModule = module {
+    single<PosturaRepository> { MysqlPosturaRepository() }
+    factory { RegistrarPosturaUseCase(get()) }
+    factory { VerHistorialPosturaUseCase(get()) }
+    factory {
+        PosturaController(
+            registrarPosturaUseCase = get<RegistrarPosturaUseCase>(),
+            verHistorialPosturaUseCase = get<VerHistorialPosturaUseCase>()
+        )
+    }
+}
+
+fun Application.posturaModuleInicio() {
+    val controller by inject<PosturaController>()
+    routing {posturaRouter(controller) }
+}
