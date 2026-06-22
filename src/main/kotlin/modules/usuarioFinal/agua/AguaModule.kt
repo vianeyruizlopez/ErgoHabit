@@ -7,11 +7,14 @@ import com.alilopez.modules.usuarioFinal.agua.application.usecase.RegistrarTomaA
 import com.alilopez.modules.usuarioFinal.agua.domain.repository.AguaRepository
 import com.alilopez.modules.usuarioFinal.agua.infrastructure.persistence.MysqlAguaRepository
 import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.AguaController
+import com.alilopez.modules.usuarioFinal.frases.domain.repository.FrasesRepository
+import com.alilopez.modules.usuarioFinal.frases.infrastructure.persistence.MysqlFrasesRepository
 import org.koin.dsl.module
 
 val aguaModule = module {
     single<AguaRepository> { MysqlAguaRepository() }
-    factory { ObtenerDashboardAguaUseCase(get()) }
+    single<FrasesRepository>{ MysqlFrasesRepository() }
+    factory { ObtenerDashboardAguaUseCase(get(),get()) }
     factory { RegistrarTomaAguaUseCase(get()) }
     factory { ConfigurarMetaUseCase(get()) }
     factory { ObtenerProgresoAguaUseCase(get()) }

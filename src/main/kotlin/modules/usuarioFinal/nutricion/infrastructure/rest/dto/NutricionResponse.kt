@@ -12,5 +12,7 @@ data class NutricionDashboardResponse(
     val horaCenaConfigurada: String,
     val chequeoDesayuno: Boolean,
     val chequeoComida: Boolean,
-    val chequeoCena: Boolean
+    val chequeoCena: Boolean,
+    val fraseMotivacional: String,
+    val tipsNutricion: List<String>
 )

@@ -15,7 +15,7 @@ val suenoModule=module {
     single <SuenoRepository>{ MysqlSuenoRepository() }
     factory { ConfigurarHorarioSuenoUseCase(get()) }
     factory { RegistrarDespertarUseCase(get()) }
-    factory { VerDashboarSuenoUseCase(get()) }
+    factory { VerDashboarSuenoUseCase(get(),get()) }
     factory { ObtenerProgresoSuenoUseCase(get()) }
     factory { SuenoController(get(), get(), get(),get()) }
 }

@@ -10,5 +10,6 @@ data class EjercicioResponse(
     val caloriasQuemadas: Int,
     val rachaDias: Int,
     val mensajeFaltanteText: String,
-    val sugerenciaCaminataText: String
+    val sugerenciaCaminataText: String,
+    val fraseMotivacional: String
 )

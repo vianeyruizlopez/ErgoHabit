@@ -35,7 +35,7 @@ class ObtenerProgresoAguaUseCase(private val repository: AguaRepository) {
 
         return HistorialHabitoResponse(
             tituloSeccion = "HIDRATACIÓN (L) · ÚLTIMOS 7 DÍAS",
-            mensajeMeta = "Verde = meta cumplida 🟢 Rojo = menos de 2,000 ml",
+            mensajeMeta = "Verde = meta cumplida  Rojo = menos de 2,000 ml",
             datosGrafica = datosGrafica
         )
     }

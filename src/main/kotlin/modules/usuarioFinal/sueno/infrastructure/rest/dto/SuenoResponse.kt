@@ -9,7 +9,9 @@ data class SuenoResponse(
     val despertoATiempo: Boolean,
     val horaDormirConfigurada: String,
     val horaDespertarConfigurada: String,
-    val porcentajeCumplimiento: Int
+    val porcentajeCumplimiento: Int,
+    val fraseMotivacional: String,
+    val tipsSueno: List<String>
 )
 @Serializable
 data class ElementoBarraGrafica(

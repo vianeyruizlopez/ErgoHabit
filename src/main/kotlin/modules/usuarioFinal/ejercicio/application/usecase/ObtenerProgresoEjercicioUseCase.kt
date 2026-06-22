@@ -34,7 +34,7 @@ class ObtenerProgresoEjercicioUseCase(private val repository: EjercicioRepositor
 
         return HistorialHabitoResponse(
             tituloSeccion = "DISTANCIA RECORRIDA (KM) · ÚLTIMOS 7 DÍAS",
-            mensajeMeta = "Verde = meta cumplida 🟢 Rojo = por debajo de 8 km",
+            mensajeMeta = "Verde = meta cumplida - Rojo = por debajo de 8 km",
             datosGrafica = datosGrafica
         )
     }

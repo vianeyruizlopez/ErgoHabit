@@ -12,6 +12,6 @@ val nutricionModule = module {
     single<NutricionRepository>{ MysqlNutricionRepository() }
     factory { ConfigurarHorariosNutricionUseCase(get()) }
     factory { MarcarComidaUseCase(get()) }
-    factory { VerDashboardNutricionUseCase(get()) }
+    factory { VerDashboardNutricionUseCase(get(),get()) }
     factory { NutricionController(get(),get(), get()) }
 }

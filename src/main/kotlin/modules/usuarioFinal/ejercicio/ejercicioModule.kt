@@ -17,7 +17,7 @@ val ejercicioModule = module {
     single<EjercicioRepository> { MysqlEjercicioRepository() }
     factory { ConfigurarMetaEjercicioUseCase(get()) }
     factory { RegistrarKilometrosUseCase(get()) }
-    factory { VerDashboardEjercicioUseCase(get()) }
+    factory { VerDashboardEjercicioUseCase(get(),get()) }
     factory { ObtenerProgresoEjercicioUseCase(get()) }
 
     factory { EjercicioController(get(), get(), get(),get()) }
