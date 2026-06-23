@@ -4,8 +4,10 @@ import com.alilopez.modules.usuarioFinal.agua.domain.model.TomaCronologica
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ErrorResponse(
-    val error: String
+data class AguaErrorResponse(
+    val code: String,
+    val message: String,
+    val details: Map<String, String>? = null
 )
 
 @Serializable

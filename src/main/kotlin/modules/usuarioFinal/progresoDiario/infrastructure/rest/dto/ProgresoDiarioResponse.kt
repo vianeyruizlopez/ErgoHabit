@@ -45,3 +45,8 @@ data class ProgresoDiarioResponse(
         )
     }
 }
+@Serializable
+data class ProgresoDiarioErrorResponse(
+    val code: String,
+    val message: String
+)

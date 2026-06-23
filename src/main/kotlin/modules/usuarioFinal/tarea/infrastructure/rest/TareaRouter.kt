@@ -1,6 +1,6 @@
 package com.alilopez.modules.usuarioFinal.tarea.infrastructure.rest
 
-import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.dto.ErrorResponse
+import com.alilopez.modules.usuarioFinal.tarea.infrastructure.rest.dto.TareaErrorResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -25,7 +25,10 @@ fun Route.tareaRouter(controller: TareaController) {
             patch("/{idTarea}/iniciar") {
                 val (idUsuario, idRol) = extraerTokenTarea(call)
                 val idTarea = call.parameters["idTarea"]?.toIntOrNull()
-                    ?: return@patch call.respond(HttpStatusCode.BadRequest, ErrorResponse("ID de tarea inválido."))
+                    ?: return@patch call.respond(
+                        HttpStatusCode.BadRequest,
+                        TareaErrorResponse(code = "ID_TAREA_INVALIDO", message = "ID de tarea inválido o ausente.")
+                    )
 
                 controller.iniciarCronometro(call, idUsuario, idRol, idTarea)
             }
@@ -33,7 +36,10 @@ fun Route.tareaRouter(controller: TareaController) {
             patch("/{idTarea}/pausar") {
                 val (idUsuario, _) = extraerTokenTarea(call)
                 val idTarea = call.parameters["idTarea"]?.toIntOrNull()
-                    ?: return@patch call.respond(HttpStatusCode.BadRequest, ErrorResponse("ID de tarea inválido."))
+                    ?: return@patch call.respond(
+                        HttpStatusCode.BadRequest,
+                        TareaErrorResponse(code = "ID_TAREA_INVALIDO", message = "ID de tarea inválido o ausente.")
+                    )
 
                 controller.pausarTarea(call, idUsuario, idTarea)
             }
@@ -41,7 +47,10 @@ fun Route.tareaRouter(controller: TareaController) {
             patch("/{idTarea}/completar") {
                 val (idUsuario, idRol) = extraerTokenTarea(call)
                 val idTarea = call.parameters["idTarea"]?.toIntOrNull()
-                    ?: return@patch call.respond(HttpStatusCode.BadRequest, ErrorResponse("ID de tarea inválido."))
+                    ?: return@patch call.respond(
+                        HttpStatusCode.BadRequest,
+                        TareaErrorResponse(code = "ID_TAREA_INVALIDO", message = "ID de tarea inválido o ausente.")
+                    )
 
                 controller.marcarComoCompletada(call, idUsuario, idRol, idTarea)
             }
@@ -49,7 +58,10 @@ fun Route.tareaRouter(controller: TareaController) {
             patch("/{idTarea}/extender") {
                 val (idUsuario, idRol) = extraerTokenTarea(call)
                 val idTarea = call.parameters["idTarea"]?.toIntOrNull()
-                    ?: return@patch call.respond(HttpStatusCode.BadRequest, ErrorResponse("ID de tarea inválido."))
+                    ?: return@patch call.respond(
+                        HttpStatusCode.BadRequest,
+                        TareaErrorResponse(code = "ID_TAREA_INVALIDO", message = "ID de tarea inválido o ausente.")
+                    )
 
                 controller.agregarTiempoExtra(call, idUsuario, idRol, idTarea)
             }
@@ -57,7 +69,10 @@ fun Route.tareaRouter(controller: TareaController) {
             get("/{idTarea}/cronometro") {
                 val (idUsuario, idRol) = extraerTokenTarea(call)
                 val idTarea = call.parameters["idTarea"]?.toIntOrNull()
-                    ?: return@get call.respond(HttpStatusCode.BadRequest, ErrorResponse("ID de tarea inválido."))
+                    ?: return@get call.respond(
+                        HttpStatusCode.BadRequest,
+                        TareaErrorResponse(code = "ID_TAREA_INVALIDO", message = "ID de tarea inválido o ausente.")
+                    )
 
                 controller.obtenerDetalleCronometro(call, idUsuario, idRol, idTarea)
             }
@@ -65,7 +80,10 @@ fun Route.tareaRouter(controller: TareaController) {
             delete("/{idTarea}") {
                 val (idUsuario, idRol) = extraerTokenTarea(call)
                 val idTarea = call.parameters["idTarea"]?.toIntOrNull()
-                    ?: return@delete call.respond(HttpStatusCode.BadRequest, ErrorResponse("ID de tarea inválido."))
+                    ?: return@delete call.respond(
+                        HttpStatusCode.BadRequest,
+                        TareaErrorResponse(code = "ID_TAREA_INVALIDO", message = "ID de tarea inválido o ausente.")
+                    )
 
                 controller.eliminarTarea(call, idUsuario, idRol, idTarea)
             }

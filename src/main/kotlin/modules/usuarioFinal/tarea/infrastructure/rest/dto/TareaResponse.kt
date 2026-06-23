@@ -26,3 +26,13 @@ data class DetalleTareaResponse(
     val accionFisica: String?,
     val fraseMotivacional: String?
 )
+@Serializable
+data class TareaErrorResponse(
+    val code: String,
+    val message: String
+)
+
+@Serializable
+data class TareaMensajeResponse(
+    val mensaje: String
+)

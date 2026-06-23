@@ -27,3 +27,14 @@ data class HistorialHabitoResponse(
     val mensajeMeta: String,
     val datosGrafica: List<ElementoBarraGrafica>
 )
+@Serializable
+data class SuenoErrorResponse(
+    val code: String,
+    val message: String,
+    val details: Map<String, String>? = null
+)
+
+@Serializable
+data class SuenoMensajeResponse(
+    val mensaje: String
+)

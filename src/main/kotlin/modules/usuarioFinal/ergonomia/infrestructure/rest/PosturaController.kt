@@ -3,6 +3,8 @@ package com.alilopez.modules.usuarioFinal.ergonomia.infrastructure.rest
 import com.alilopez.modules.usuarioFinal.ergonomia.application.usecase.ObtenerProgresoSemanalUseCase
 import com.alilopez.modules.usuarioFinal.ergonomia.application.usecase.RegistrarPosturaUseCase
 import com.alilopez.modules.usuarioFinal.ergonomia.application.usecase.VerHistorialPosturaUseCase
+import com.alilopez.modules.usuarioFinal.ergonomia.infrestructure.rest.dto.ErgonomiaErrorResponse
+import com.alilopez.modules.usuarioFinal.ergonomia.infrestructure.rest.dto.ErgonomiaMensajeResponse
 import com.alilopez.modules.usuarioFinal.ergonomia.infrestructure.rest.dto.RegistroPosturaRequest
 import com.alilopez.modules.usuarioFinal.ergonomia.infrestructure.rest.dto.toResponse
 import io.ktor.http.*
@@ -21,60 +23,90 @@ class PosturaController(
     suspend fun sincronizarAlertas(call: ApplicationCall) {
         val idAutenticado = obtenerIdSolicitante(call)
         if (idAutenticado == 0) {
-            return call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Token inválido o expirado."))
+            return call.respond(
+                HttpStatusCode.Unauthorized,
+                ErgonomiaErrorResponse(code = "TOKEN_INVALIDO", message = "Token inválido o expirado.")
+            )
         }
 
         try {
             val request = call.receive<RegistroPosturaRequest>()
+
+            if (request.totalAlertas < 0) {
+                return call.respond(
+                    HttpStatusCode.BadRequest,
+                    ErgonomiaErrorResponse(
+                        code = "ALERTAS_INVALIDAS",
+                        message = "Validación fallida",
+                        details = mapOf("field" to "totalAlertas", "rule" to "no_puede_ser_negativo")
+                    )
+                )
+            }
+
             val completado = registrarPosturaUseCase.ejecutar(idAutenticado, request.totalAlertas)
 
             if (completado) {
                 call.respond(
                     HttpStatusCode.OK,
-                    mapOf("mensaje" to "Historial de postura cervical actualizado y acumulado con éxito.")
+                    ErgonomiaMensajeResponse("Historial de postura cervical actualizado y acumulado con éxito.")
                 )
             } else {
                 call.respond(
                     HttpStatusCode.BadRequest,
-                    mapOf("error" to "No se pudieron procesar las alertas de ergonomía.")
+                    ErgonomiaErrorResponse(code = "ERROR_PROCESAMIENTO", message = "No se pudieron procesar las alertas de ergonomía.")
                 )
             }
 
         } catch (e: IllegalArgumentException) {
-            call.respond(HttpStatusCode.BadRequest, mapOf("error" to (e.message ?: "Datos de petición inválidos.")))
+            call.respond(
+                HttpStatusCode.BadRequest,
+                ErgonomiaErrorResponse(code = "DATOS_INVALIDOS", message = e.message ?: "Datos de petición inválidos.")
+            )
         } catch (e: Exception) {
-            e.printStackTrace()
-            call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Error interno del servidor al registrar la postura."))
+            call.respond(
+                HttpStatusCode.BadRequest,
+                ErgonomiaErrorResponse(code = "JSON_INVALIDO", message = "Formato JSON inválido.")
+            )
         }
     }
 
     suspend fun verHistorial(call: ApplicationCall) {
         val idAutenticado = obtenerIdSolicitante(call)
         if (idAutenticado == 0) {
-            return call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Token inválido o expirado."))
+            return call.respond(
+                HttpStatusCode.Unauthorized,
+                ErgonomiaErrorResponse(code = "TOKEN_INVALIDO", message = "Token inválido o expirado.")
+            )
         }
 
         try {
             val historial = verHistorialPosturaUseCase.ejecutar(idAutenticado)
             call.respond(HttpStatusCode.OK, historial.map { it.toResponse() })
         } catch (e: Exception) {
-            e.printStackTrace()
-            call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Error al obtener el historial de ergonomía."))
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                ErgonomiaErrorResponse(code = "ERROR_SERVIDOR", message = "Error al obtener el historial de ergonomía.")
+            )
         }
     }
 
     suspend fun obtenerProgresoSemanal(call: ApplicationCall) {
         val idAutenticado = obtenerIdSolicitante(call)
         if (idAutenticado == 0) {
-            return call.respond(HttpStatusCode.Unauthorized, mapOf("error" to "Token inválido o expirado."))
+            return call.respond(
+                HttpStatusCode.Unauthorized,
+                ErgonomiaErrorResponse(code = "TOKEN_INVALIDO", message = "Token inválido o expirado.")
+            )
         }
 
         try {
             val progreso = obtenerProgresoSemanalUseCase.ejecutar(idAutenticado)
             call.respond(HttpStatusCode.OK, progreso)
         } catch (e: Exception) {
-            e.printStackTrace()
-            call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Error al procesar la gráfica de progreso."))
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                ErgonomiaErrorResponse(code = "ERROR_SERVIDOR", message = "Error al procesar la gráfica de progreso.")
+            )
         }
     }
 

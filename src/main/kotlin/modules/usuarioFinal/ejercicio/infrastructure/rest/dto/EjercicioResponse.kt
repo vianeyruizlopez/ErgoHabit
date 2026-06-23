@@ -13,3 +13,14 @@ data class EjercicioResponse(
     val sugerenciaCaminataText: String,
     val fraseMotivacional: String
 )
+@Serializable
+data class EjercicioErrorResponse(
+    val code: String,
+    val message: String,
+    val details: Map<String, String>? = null
+)
+
+@Serializable
+data class MensajeResponse(
+    val mensaje: String
+)

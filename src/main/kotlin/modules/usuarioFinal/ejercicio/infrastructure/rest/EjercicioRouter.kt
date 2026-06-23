@@ -1,6 +1,6 @@
 package com.alilopez.modules.usuarioFinal.ejercicio.infrastructure.rest
 
-import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.dto.ErrorResponse
+import com.alilopez.modules.usuarioFinal.ejercicio.infrastructure.rest.dto.EjercicioErrorResponse
 import io.ktor.http.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -13,25 +13,45 @@ fun Route.ejercicioRouter(controller: EjercicioController) {
 
             get("/dashboard") {
                 val (idUsuario, idRol) = extraerTokenEjercicio(call)
-                if (idRol != 2) return@get call.respond(HttpStatusCode.Forbidden, ErrorResponse("Rol insuficiente."))
+                if (idRol != 2) {
+                    return@get call.respond(
+                        HttpStatusCode.Forbidden,
+                        EjercicioErrorResponse(code = "ROL_INSUFICIENTE", message = "Rol insuficiente.")
+                    )
+                }
                 controller.verDashboard(call, idUsuario)
             }
 
             get("/progreso-semanal") {
                 val (idUsuario, idRol) = extraerTokenEjercicio(call)
-                if (idRol != 2) return@get call.respond(HttpStatusCode.Forbidden, ErrorResponse("Rol insuficiente."))
+                if (idRol != 2) {
+                    return@get call.respond(
+                        HttpStatusCode.Forbidden,
+                        EjercicioErrorResponse(code = "ROL_INSUFICIENTE", message = "Rol insuficiente.")
+                    )
+                }
                 controller.verProgresoSemanal(call, idUsuario)
             }
 
             put("/meta") {
                 val (idUsuario, idRol) = extraerTokenEjercicio(call)
-                if (idRol != 2) return@put call.respond(HttpStatusCode.Forbidden, ErrorResponse("Acceso exclusivo para estudiantes."))
+                if (idRol != 2) {
+                    return@put call.respond(
+                        HttpStatusCode.Forbidden,
+                        EjercicioErrorResponse(code = "ACCESO_DENEGADO", message = "Acceso exclusivo para estudiantes.")
+                    )
+                }
                 controller.actualizarMeta(call, idUsuario)
             }
 
             post("/recorrido") {
                 val (idUsuario, idRol) = extraerTokenEjercicio(call)
-                if (idRol != 2) return@post call.respond(HttpStatusCode.Forbidden, ErrorResponse("No autorizado."))
+                if (idRol != 2) {
+                    return@post call.respond(
+                        HttpStatusCode.Forbidden,
+                        EjercicioErrorResponse(code = "NO_AUTORIZADO", message = "No autorizado.")
+                    )
+                }
                 controller.agregarProgreso(call, idUsuario)
             }
         }

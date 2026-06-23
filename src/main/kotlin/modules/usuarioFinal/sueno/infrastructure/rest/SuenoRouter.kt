@@ -1,6 +1,6 @@
 package com.alilopez.modules.usuarioFinal.sueno.infrastructure.rest
 
-import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.dto.ErrorResponse
+import com.alilopez.modules.usuarioFinal.sueno.infrastructure.rest.dto.SuenoErrorResponse
 import io.ktor.http.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -13,28 +13,48 @@ fun Route.suenoRouter(controller: SuenoController) {
 
             get("/dashboard") {
                 val (idUsuario, idRol) = extraerToken(call)
-                if (idRol != 2) return@get call.respond(HttpStatusCode.Forbidden, ErrorResponse("Acceso Denegado"))
+                if (idRol != 2) {
+                    return@get call.respond(
+                        HttpStatusCode.Forbidden,
+                        SuenoErrorResponse(code = "ACCESO_DENEGADO", message = "Acceso Denegado. Rol insuficiente.")
+                    )
+                }
 
                 controller.verDashboard(call, idUsuario)
             }
 
             get("/progreso-semanal") {
                 val (idUsuario, idRol) = extraerToken(call)
-                if (idRol != 2) return@get call.respond(HttpStatusCode.Forbidden, ErrorResponse("Acceso Denegado"))
+                if (idRol != 2) {
+                    return@get call.respond(
+                        HttpStatusCode.Forbidden,
+                        SuenoErrorResponse(code = "ACCESO_DENEGADO", message = "Acceso Denegado. Rol insuficiente.")
+                    )
+                }
 
                 controller.verProgresoSemanal(call, idUsuario)
             }
 
             put("/horario") {
                 val (idUsuario, idRol) = extraerToken(call)
-                if (idRol != 2) return@put call.respond(HttpStatusCode.Forbidden, ErrorResponse("Acceso Denegado"))
+                if (idRol != 2) {
+                    return@put call.respond(
+                        HttpStatusCode.Forbidden,
+                        SuenoErrorResponse(code = "ACCESO_DENEGADO", message = "Acceso Denegado. Solo estudiantes pueden modificar.")
+                    )
+                }
 
                 controller.guardarHorario(call, idUsuario)
             }
 
             post("/despertar") {
                 val (idUsuario, idRol) = extraerToken(call)
-                if (idRol != 2) return@post call.respond(HttpStatusCode.Forbidden, ErrorResponse("Acceso Denegado"))
+                if (idRol != 2) {
+                    return@post call.respond(
+                        HttpStatusCode.Forbidden,
+                        SuenoErrorResponse(code = "NO_AUTORIZADO", message = "Acceso Denegado. No autorizado.")
+                    )
+                }
 
                 controller.registrarDespertar(call, idUsuario)
             }

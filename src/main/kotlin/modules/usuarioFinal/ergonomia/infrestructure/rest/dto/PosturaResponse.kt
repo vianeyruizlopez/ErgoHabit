@@ -28,3 +28,14 @@ data class ProgresoPosturaResponse(
     val mensajeMeta: String,
     val datosGrafica: List<ElementoGraficaPostura>
 )
+@Serializable
+data class ErgonomiaErrorResponse(
+    val code: String,
+    val message: String,
+    val details: Map<String, String>? = null
+)
+
+@Serializable
+data class ErgonomiaMensajeResponse(
+    val mensaje: String
+)

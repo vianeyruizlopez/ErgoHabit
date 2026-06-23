@@ -25,8 +25,8 @@ class VerProgresoDiarioUseCase(
 
 
         val estadoPosturaCalculado = when {
-            datosBD.alertasPostura <= 2 -> "Postura OK"
-            datosBD.alertasPostura in 3..5 -> "Postura Regular"
+            datosBD.alertasPostura <= 5 -> "Postura OK"
+            datosBD.alertasPostura in 10..15 -> "Postura Regular"
             else -> "Postura Crítica"
         }
 

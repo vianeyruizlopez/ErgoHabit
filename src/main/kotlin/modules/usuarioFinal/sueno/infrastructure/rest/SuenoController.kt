@@ -2,11 +2,9 @@ package com.alilopez.modules.usuarioFinal.sueno.infrastructure.rest
 
 import com.alilopez.modules.usuarioFinal.sueno.application.usecase.ConfigurarHorarioSuenoUseCase
 import com.alilopez.modules.usuarioFinal.sueno.application.usecase.RegistrarDespertarUseCase
-import com.alilopez.modules.usuarioFinal.sueno.infrastructure.rest.dto.SuenoRequest
-import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.dto.MensajeResponse
-import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.dto.ErrorResponse
 import com.alilopez.modules.usuarioFinal.sueno.application.usecase.ObtenerProgresoSuenoUseCase
 import com.alilopez.modules.usuarioFinal.sueno.application.usecase.VerDashboarSuenoUseCase
+import com.alilopez.modules.usuarioFinal.sueno.infrastructure.rest.dto.*
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -26,7 +24,10 @@ class SuenoController(
             val response = verDashboarSuenoUseCase.execute(idUsuario)
             call.respond(HttpStatusCode.OK, response)
         } catch (e: Exception) {
-            call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Error al obtener dashboard: ${e.localizedMessage}"))
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                SuenoErrorResponse(code = "ERROR_DASHBOARD", message = "Error al obtener el dashboard de sueño.")
+            )
         }
     }
 
@@ -35,8 +36,10 @@ class SuenoController(
             val response = obtenerProgresoSuenoUseCase.ejecutar(idUsuario)
             call.respond(HttpStatusCode.OK, response)
         } catch (e: Exception) {
-            e.printStackTrace()
-            call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Error al obtener progreso semanal: ${e.localizedMessage}"))
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                SuenoErrorResponse(code = "ERROR_PROGRESO", message = "Error al obtener el progreso semanal de sueño.")
+            )
         }
     }
 
@@ -50,12 +53,27 @@ class SuenoController(
 
             call.respond(
                 HttpStatusCode.OK,
-                MensajeResponse("Horario configurado. Dormirás $horasCalculadas horas.")
+                SuenoMensajeResponse("Horario configurado con éxito. Dormirás un aproximado de $horasCalculadas horas.")
             )
         } catch (e: DateTimeParseException) {
-            call.respond(HttpStatusCode.BadRequest, ErrorResponse("Formato inválido. Usa 'HH:mm'"))
+            call.respond(
+                HttpStatusCode.BadRequest,
+                SuenoErrorResponse(
+                    code = "FORMATO_HORA_INVALIDO",
+                    message = "Validación fallida",
+                    details = mapOf("error" to "Usa el formato de 24 horas 'HH:mm' (ej. 23:15)")
+                )
+            )
         } catch (e: IllegalArgumentException) {
-            call.respond(HttpStatusCode.BadRequest, ErrorResponse(e.message ?: "Datos inválidos"))
+            call.respond(
+                HttpStatusCode.BadRequest,
+                SuenoErrorResponse(code = "DATOS_HORARIO_INVALIDOS", message = e.message ?: "Datos de horarios inválidos.")
+            )
+        } catch (e: Exception) {
+            call.respond(
+                HttpStatusCode.BadRequest,
+                SuenoErrorResponse(code = "JSON_INVALIDO", message = "Estructura JSON corrupta o inválida.")
+            )
         }
     }
 
@@ -65,12 +83,21 @@ class SuenoController(
             val exito = registrarDespertarUseCase.execute(idUsuario, horaActual)
 
             if (exito) {
-                call.respond(HttpStatusCode.OK, MensajeResponse("¡Buenos días! Tu registro de sueño ha sido guardado."))
+                call.respond(
+                    HttpStatusCode.OK,
+                    SuenoMensajeResponse("¡Buenos días! Tu registro de sueño ha sido guardado.")
+                )
             } else {
-                call.respond(HttpStatusCode.InternalServerError, ErrorResponse("No se pudo guardar tu progreso de sueño."))
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    SuenoErrorResponse(code = "ERROR_BASE_DATOS", message = "No se pudo guardar tu progreso de sueño de hoy.")
+                )
             }
         } catch (e: IllegalStateException) {
-            call.respond(HttpStatusCode.BadRequest, ErrorResponse(e.message ?: "Error de estado"))
+            call.respond(
+                HttpStatusCode.BadRequest,
+                SuenoErrorResponse(code = "ESTADO_INVALIDO", message = e.message ?: "Error en el flujo del estado de sueño.")
+            )
         }
     }
 }

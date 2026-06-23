@@ -29,3 +29,19 @@ fun Usuario.toResponse() = UsuarioResponse(
     estatura = this.estatura,
     fotoUrl = this.fotoUrl
 )
+@Serializable
+data class UsuarioErrorResponse(
+    val code: String,
+    val message: String
+)
+
+@Serializable
+data class UsuarioMensajeResponse(
+    val mensaje: String
+)
+
+@Serializable
+data class FotoPerfilResponse(
+    val mensaje: String,
+    val url: String
+)

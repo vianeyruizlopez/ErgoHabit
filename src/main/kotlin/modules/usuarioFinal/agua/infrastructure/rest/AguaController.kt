@@ -17,8 +17,15 @@ class AguaController(
     private val obtenerProgresoAguaUseCase: ObtenerProgresoAguaUseCase
 ) {
     suspend fun verDashboard(call: ApplicationCall, idUsuarioAutenticado: Int) {
-        val dashboard = obtenerDashboardUseCase.execute(idUsuarioAutenticado)
-        call.respond(HttpStatusCode.OK, dashboard)
+        try {
+            val dashboard = obtenerDashboardUseCase.execute(idUsuarioAutenticado)
+            call.respond(HttpStatusCode.OK, dashboard)
+        } catch (e: Exception) {
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                AguaErrorResponse(code = "ERROR_SERVIDOR", message = "Error al obtener el dashboard.")
+            )
+        }
     }
 
     suspend fun verProgresoSemanal(call: ApplicationCall, idUsuarioAutenticado: Int) {
@@ -26,7 +33,10 @@ class AguaController(
             val response = obtenerProgresoAguaUseCase.ejecutar(idUsuarioAutenticado)
             call.respond(HttpStatusCode.OK, response)
         } catch (e: Exception) {
-            call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Error al obtener el progreso semanal: ${e.localizedMessage}"))
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                AguaErrorResponse(code = "ERROR_SERVIDOR", message = "Error al obtener el progreso semanal: ${e.localizedMessage}")
+            )
         }
     }
 
@@ -34,15 +44,35 @@ class AguaController(
         try {
             val request = call.receive<RegistrarTomaRequest>()
 
+            if (request.cantidadMl <= 0) {
+                return call.respond(
+                    HttpStatusCode.BadRequest,
+                    AguaErrorResponse(
+                        code = "CANTIDAD_INVALIDA",
+                        message = "Validación fallida",
+                        details = mapOf("field" to "cantidadMl", "rule" to "debe_ser_mayor_a_cero")
+                    )
+                )
+            }
+
             if (registrarTomaUseCase.execute(idUsuarioAutenticado, request.cantidadMl)) {
                 call.respond(HttpStatusCode.Created, MensajeResponse("Toma registrada con éxito."))
             } else {
-                call.respond(HttpStatusCode.InternalServerError, ErrorResponse("No se pudo registrar la toma en la base de datos."))
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    AguaErrorResponse(code = "ERROR_BASE_DATOS", message = "No se pudo registrar la toma en la base de datos.")
+                )
             }
         } catch (e: IllegalArgumentException) {
-            call.respond(HttpStatusCode.BadRequest, ErrorResponse(e.message ?: "Datos inválidos"))
+            call.respond(
+                HttpStatusCode.BadRequest,
+                AguaErrorResponse(code = "DATOS_INVALIDOS", message = e.message ?: "Datos inválidos")
+            )
         } catch (e: Exception) {
-            call.respond(HttpStatusCode.BadRequest, ErrorResponse("Formato JSON inválido: ${e.localizedMessage}"))
+            call.respond(
+                HttpStatusCode.BadRequest,
+                AguaErrorResponse(code = "JSON_INVALIDO", message = "Formato JSON inválido: ${e.localizedMessage}")
+            )
         }
     }
 
@@ -59,12 +89,21 @@ class AguaController(
             if (exito) {
                 call.respond(HttpStatusCode.OK, MensajeResponse("Meta actualizada con éxito."))
             } else {
-                call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Error al actualizar la meta en la base de datos."))
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    AguaErrorResponse(code = "ERROR_BASE_DATOS", message = "Error al actualizar la meta en la base de datos.")
+                )
             }
         } catch (e: IllegalArgumentException) {
-            call.respond(HttpStatusCode.BadRequest, ErrorResponse(e.message ?: "Datos de configuración inválidos"))
+            call.respond(
+                HttpStatusCode.BadRequest,
+                AguaErrorResponse(code = "DATOS_INVALIDOS", message = e.message ?: "Datos de configuración inválidos")
+            )
         } catch (e: Exception) {
-            call.respond(HttpStatusCode.BadRequest, ErrorResponse("Formato JSON inválido: ${e.localizedMessage}"))
+            call.respond(
+                HttpStatusCode.BadRequest,
+                AguaErrorResponse(code = "JSON_INVALIDO", message = "Formato JSON inválido: ${e.localizedMessage}")
+            )
         }
     }
 }

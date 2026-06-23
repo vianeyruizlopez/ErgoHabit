@@ -1,6 +1,6 @@
 package com.alilopez.modules.usuarioFinal.nutricion.infrastructure.rest
 
-import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.dto.ErrorResponse
+import com.alilopez.modules.usuarioFinal.nutricion.infrastructure.rest.dto.NutricionErrorResponse
 import io.ktor.http.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -13,21 +13,36 @@ fun Route.nutricionRouter(controller: NutricionController) {
 
             get("/dashboard") {
                 val (idUsuario, idRol) = extraerTokenNutricion(call)
-                if (idRol != 2) return@get call.respond(HttpStatusCode.Forbidden, ErrorResponse("Acceso Denegado. Rol insuficiente."))
+                if (idRol != 2) {
+                    return@get call.respond(
+                        HttpStatusCode.Forbidden,
+                        NutricionErrorResponse(code = "ACCESO_DENEGADO", message = "Acceso Denegado. Rol insuficiente.")
+                    )
+                }
 
                 controller.verDashboard(call, idUsuario)
             }
 
             put("/horarios") {
                 val (idUsuario, idRol) = extraerTokenNutricion(call)
-                if (idRol != 2) return@put call.respond(HttpStatusCode.Forbidden, ErrorResponse("Acceso Denegado. Solo estudiantes pueden modificar."))
+                if (idRol != 2) {
+                    return@put call.respond(
+                        HttpStatusCode.Forbidden,
+                        NutricionErrorResponse(code = "ACCESO_DENEGADO", message = "Acceso Denegado. Solo estudiantes pueden modificar.")
+                    )
+                }
 
                 controller.guardarHorarios(call, idUsuario)
             }
 
             post("/marcar") {
                 val (idUsuario, idRol) = extraerTokenNutricion(call)
-                if (idRol != 2) return@post call.respond(HttpStatusCode.Forbidden, ErrorResponse("Acceso Denegado. No autorizado."))
+                if (idRol != 2) {
+                    return@post call.respond(
+                        HttpStatusCode.Forbidden,
+                        NutricionErrorResponse(code = "NO_AUTORIZADO", message = "Acceso Denegado. No autorizado.")
+                    )
+                }
 
                 controller.marcarProgresoComida(call, idUsuario)
             }

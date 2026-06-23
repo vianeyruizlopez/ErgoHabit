@@ -3,8 +3,6 @@ package com.alilopez.modules.usuarioFinal.tarea.infrastructure.rest
 import com.alilopez.modules.usuarioFinal.tarea.application.usecase.*
 import com.alilopez.modules.usuarioFinal.tarea.domain.repository.TareaRepository
 import com.alilopez.modules.usuarioFinal.tarea.infrastructure.rest.dto.*
-import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.dto.MensajeResponse
-import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.dto.ErrorResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -27,24 +25,46 @@ class TareaController(
             val response = listarTareasUseCase.execute(idUsuario, idRol)
             call.respond(HttpStatusCode.OK, response)
         } catch (e: IllegalAccessException) {
-            call.respond(HttpStatusCode.Forbidden, ErrorResponse(e.message ?: "Acceso denegado."))
+            call.respond(
+                HttpStatusCode.Forbidden,
+                TareaErrorResponse(code = "ACCESO_DENEGADO", message = e.message ?: "Acceso denegado.")
+            )
         } catch (e: Exception) {
-            e.printStackTrace()
-            call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Error al cargar tareas."))
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                TareaErrorResponse(code = "ERROR_SERVIDOR", message = "Error al cargar tareas.")
+            )
         }
     }
 
     suspend fun agregarTarea(call: ApplicationCall, idUsuario: Int, idRol: Int) {
         try {
             val request = call.receive<TareaRequest>()
+
+            if (request.titulo.isBlank()) {
+                return call.respond(
+                    HttpStatusCode.BadRequest,
+                    TareaErrorResponse(code = "TITULO_REQUERIDO", message = "El título de la tarea no puede estar vacío.")
+                )
+            }
+
             crearTareaUseCase.execute(idUsuario, idRol, request.titulo, request.categoria, request.duracionTarea)
-            call.respond(HttpStatusCode.Created, MensajeResponse("Tarea creada de forma exitosa."))
+            call.respond(HttpStatusCode.Created, TareaMensajeResponse("Tarea creada de forma exitosa."))
         } catch (e: IllegalAccessException) {
-            call.respond(HttpStatusCode.Forbidden, ErrorResponse(e.message ?: "No autorizado."))
+            call.respond(
+                HttpStatusCode.Forbidden,
+                TareaErrorResponse(code = "NO_AUTORIZADO", message = e.message ?: "No autorizado.")
+            )
         } catch (e: IllegalArgumentException) {
-            call.respond(HttpStatusCode.BadRequest, ErrorResponse(e.message ?: "Datos inválidos."))
+            call.respond(
+                HttpStatusCode.BadRequest,
+                TareaErrorResponse(code = "DATOS_INVALIDOS", message = e.message ?: "Datos inválidos.")
+            )
         } catch (e: Exception) {
-            call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Error del servidor."))
+            call.respond(
+                HttpStatusCode.BadRequest,
+                TareaErrorResponse(code = "JSON_INVALIDO", message = "Estructura de la petición inválida.")
+            )
         }
     }
 
@@ -52,17 +72,28 @@ class TareaController(
         try {
             val exito = iniciarCronometroUseCase.ejecutar(idTarea, idUsuario, idRol)
             if (exito) {
-                call.respond(HttpStatusCode.OK, MensajeResponse("Cronómetro iniciado de forma exitosa. ¡A enfocar de manera saludable!"))
+                call.respond(HttpStatusCode.OK, TareaMensajeResponse("Cronómetro iniciado de forma exitosa. ¡A enfocar de manera saludable!"))
             } else {
-                call.respond(HttpStatusCode.NotFound, ErrorResponse("No se pudo iniciar el cronómetro."))
+                call.respond(
+                    HttpStatusCode.NotFound,
+                    TareaErrorResponse(code = "TAREA_NOT_FOUND", message = "No se pudo encontrar o iniciar el cronómetro de la tarea.")
+                )
             }
         } catch (e: IllegalAccessException) {
-            call.respond(HttpStatusCode.Forbidden, ErrorResponse(e.message ?: "No autorizado."))
+            call.respond(
+                HttpStatusCode.Forbidden,
+                TareaErrorResponse(code = "NO_AUTORIZADO", message = e.message ?: "No autorizado.")
+            )
         } catch (e: IllegalArgumentException) {
-            call.respond(HttpStatusCode.BadRequest, ErrorResponse(e.message ?: "Acción inválida."))
+            call.respond(
+                HttpStatusCode.BadRequest,
+                TareaErrorResponse(code = "ACCION_INVALIDA", message = e.message ?: "Acción inválida.")
+            )
         } catch (e: Exception) {
-            e.printStackTrace()
-            call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Error al iniciar el cronómetro."))
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                TareaErrorResponse(code = "ERROR_CRONOMETRO", message = "Error al iniciar el cronómetro.")
+            )
         }
     }
 
@@ -71,14 +102,23 @@ class TareaController(
             val exito = completarTareaUseCase.ejecutar(idTarea, idUsuario, idRol)
             if (exito) {
                 val fraseFelicitacion = repository.obtenerFraseAleatoria("TAREA_EXITO")
-                call.respond(HttpStatusCode.OK, MensajeResponse("¡Felicidades! Tarea completada con éxito. $fraseFelicitacion"))
+                call.respond(HttpStatusCode.OK, TareaMensajeResponse("¡Felicidades! Tarea completada con éxito. $fraseFelicitacion"))
             } else {
-                call.respond(HttpStatusCode.NotFound, ErrorResponse("No se encontró la tarea especificada."))
+                call.respond(
+                    HttpStatusCode.NotFound,
+                    TareaErrorResponse(code = "TAREA_NOT_FOUND", message = "No se encontró la tarea especificada.")
+                )
             }
         } catch (e: IllegalAccessException) {
-            call.respond(HttpStatusCode.Forbidden, ErrorResponse(e.message ?: "No autorizado."))
+            call.respond(
+                HttpStatusCode.Forbidden,
+                TareaErrorResponse(code = "NO_AUTORIZADO", message = e.message ?: "No autorizado.")
+            )
         } catch (e: Exception) {
-            call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Error al actualizar la tarea."))
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                TareaErrorResponse(code = "ERROR_SERVIDOR", message = "Error al actualizar la tarea.")
+            )
         }
     }
 
@@ -88,16 +128,28 @@ class TareaController(
             val exito = extenderTareaUseCase.ejecutar(idTarea, idUsuario, idRol, request.minutosExtra)
             if (exito) {
                 val fraseAnimo = repository.obtenerFraseAleatoria("TAREA_PENDIENTE")
-                call.respond(HttpStatusCode.OK, MensajeResponse("Tiempo de la sesión extendido correctamente. $fraseAnimo"))
+                call.respond(HttpStatusCode.OK, TareaMensajeResponse("Tiempo de la sesión extendido correctamente. $fraseAnimo"))
             } else {
-                call.respond(HttpStatusCode.NotFound, ErrorResponse("No se pudo extender el tiempo."))
+                call.respond(
+                    HttpStatusCode.NotFound,
+                    TareaErrorResponse(code = "TAREA_NOT_FOUND", message = "No se pudo extender el tiempo, tarea no encontrada.")
+                )
             }
         } catch (e: IllegalAccessException) {
-            call.respond(HttpStatusCode.Forbidden, ErrorResponse(e.message ?: "No autorizado."))
+            call.respond(
+                HttpStatusCode.Forbidden,
+                TareaErrorResponse(code = "NO_AUTORIZADO", message = e.message ?: "No autorizado.")
+            )
         } catch (e: IllegalArgumentException) {
-            call.respond(HttpStatusCode.BadRequest, ErrorResponse(e.message ?: "Monto inválido."))
+            call.respond(
+                HttpStatusCode.BadRequest,
+                TareaErrorResponse(code = "TIEMPO_INVALIDO", message = e.message ?: "Monto de tiempo inválido.")
+            )
         } catch (e: Exception) {
-            call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Error de comunicación."))
+            call.respond(
+                HttpStatusCode.BadRequest,
+                TareaErrorResponse(code = "JSON_INVALIDO", message = "Formato de tiempo extra inválido.")
+            )
         }
     }
 
@@ -105,15 +157,23 @@ class TareaController(
         try {
             val exito = pausarTareaUseCase.ejecutar(idTarea, idUsuario)
             if (exito) {
-                call.respond(HttpStatusCode.OK, MensajeResponse("Cronómetro pausado. Se guardó tu progreso de tiempo."))
+                call.respond(HttpStatusCode.OK, TareaMensajeResponse("Cronómetro pausado. Se guardó tu progreso de tiempo."))
             } else {
-                call.respond(HttpStatusCode.NotFound, ErrorResponse("No se pudo pausar la tarea."))
+                call.respond(
+                    HttpStatusCode.NotFound,
+                    TareaErrorResponse(code = "TAREA_NOT_FOUND", message = "No se pudo pausar la tarea, id inválido.")
+                )
             }
         } catch (e: IllegalArgumentException) {
-            call.respond(HttpStatusCode.BadRequest, ErrorResponse(e.message ?: "Acción inválida."))
+            call.respond(
+                HttpStatusCode.BadRequest,
+                TareaErrorResponse(code = "ACCION_INVALIDA", message = e.message ?: "Acción inválida.")
+            )
         } catch (e: Exception) {
-            e.printStackTrace()
-            call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Error al pausar la sesión."))
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                TareaErrorResponse(code = "ERROR_SERVIDOR", message = "Error al pausar la sesión.")
+            )
         }
     }
 
@@ -121,15 +181,23 @@ class TareaController(
         try {
             val exito = eliminarTareaUseCase.ejecutar(idTarea, idUsuario, idRol)
             if (exito) {
-                call.respond(HttpStatusCode.OK, MensajeResponse("Tarea eliminada correctamente."))
+                call.respond(HttpStatusCode.OK, TareaMensajeResponse("Tarea eliminada correctamente."))
             } else {
-                call.respond(HttpStatusCode.NotFound, ErrorResponse("No se encontró la tarea a eliminar."))
+                call.respond(
+                    HttpStatusCode.NotFound,
+                    TareaErrorResponse(code = "TAREA_NOT_FOUND", message = "No se encontró la tarea a eliminar.")
+                )
             }
         } catch (e: IllegalAccessException) {
-            call.respond(HttpStatusCode.Forbidden, ErrorResponse(e.message ?: "No autorizado."))
+            call.respond(
+                HttpStatusCode.Forbidden,
+                TareaErrorResponse(code = "NO_AUTORIZADO", message = e.message ?: "No autorizado.")
+            )
         } catch (e: Exception) {
-            e.printStackTrace()
-            call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Error al borrar la tarea."))
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                TareaErrorResponse(code = "ERROR_SERVIDOR", message = "Error al borrar la tarea.")
+            )
         }
     }
 
@@ -138,10 +206,15 @@ class TareaController(
             val response = obtenerDetalleCronometroUseCase.execute(idTarea, idUsuario, idRol)
             call.respond(HttpStatusCode.OK, response)
         } catch (e: IllegalArgumentException) {
-            call.respond(HttpStatusCode.BadRequest, ErrorResponse(e.message ?: "Tarea inválida."))
+            call.respond(
+                HttpStatusCode.BadRequest,
+                TareaErrorResponse(code = "TAREA_INVALIDA", message = e.message ?: "Tarea inválida.")
+            )
         } catch (e: Exception) {
-            e.printStackTrace()
-            call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Error al obtener alertas."))
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                TareaErrorResponse(code = "ERROR_SERVIDOR", message = "Error al obtener alertas de la tarea.")
+            )
         }
     }
 }

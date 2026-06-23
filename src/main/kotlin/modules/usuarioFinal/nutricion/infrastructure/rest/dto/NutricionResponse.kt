@@ -16,3 +16,14 @@ data class NutricionDashboardResponse(
     val fraseMotivacional: String,
     val tipsNutricion: List<String>
 )
+@Serializable
+data class NutricionErrorResponse(
+    val code: String,
+    val message: String,
+    val details: Map<String, String>? = null
+)
+
+@Serializable
+data class NutricionMensajeResponse(
+    val mensaje: String
+)

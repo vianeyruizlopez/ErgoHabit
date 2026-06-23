@@ -1,9 +1,7 @@
 package com.alilopez.modules.usuarios.infrastructure.rest
 
-import com.alilopez.modules.autentificacion.infrastructure.rest.AutentificacionController
 import io.ktor.server.auth.*
 import io.ktor.server.routing.*
-import org.koin.ktor.ext.inject
 
 fun Route.usuarioRouting(controller: UsuarioController) {
 
@@ -29,10 +27,10 @@ fun Route.usuarioRouting(controller: UsuarioController) {
             delete("/{id}") {
                 controller.eliminar(call)
             }
+
             patch("/perfil/foto") {
                 controller.actualizarFotoPerfil(call)
             }
         }
-
     }
 }

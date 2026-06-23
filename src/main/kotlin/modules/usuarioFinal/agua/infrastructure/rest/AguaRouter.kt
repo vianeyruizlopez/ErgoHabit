@@ -1,6 +1,6 @@
 package com.alilopez.modules.usuarioFinal.agua.infrastructure.rest
 
-import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.dto.ErrorResponse
+import com.alilopez.modules.usuarioFinal.agua.infrastructure.rest.dto.AguaErrorResponse
 import io.ktor.http.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -17,7 +17,10 @@ fun Route.aguaRouter(controller: AguaController) {
                 val idRol = principal?.payload?.getClaim("idRol")?.asInt() ?: 0
 
                 if (idRol != 2) {
-                    call.respond(HttpStatusCode.Forbidden, ErrorResponse("Acceso denegado. Recurso exclusivo para usuarios finales."))
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        AguaErrorResponse(code = "ACCESO_DENEGADO", message = "Acceso denegado. Recurso exclusivo para usuarios finales.")
+                    )
                     return@get
                 }
 
@@ -30,7 +33,10 @@ fun Route.aguaRouter(controller: AguaController) {
                 val idRol = principal?.payload?.getClaim("idRol")?.asInt() ?: 0
 
                 if (idRol != 2) {
-                    call.respond(HttpStatusCode.Forbidden, ErrorResponse("Acceso denegado."))
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        AguaErrorResponse(code = "ACCESO_DENEGADO", message = "Acceso denegado.")
+                    )
                     return@get
                 }
 
@@ -43,7 +49,10 @@ fun Route.aguaRouter(controller: AguaController) {
                 val idRol = principal?.payload?.getClaim("idRol")?.asInt() ?: 0
 
                 if (idRol != 2) {
-                    call.respond(HttpStatusCode.Forbidden, ErrorResponse("Acceso denegado. No tienes permisos para registrar tomas de agua."))
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        AguaErrorResponse(code = "ACCESO_DENEGADO", message = "Acceso denegado. No tienes permisos para registrar tomas de agua.")
+                    )
                     return@post
                 }
 
@@ -56,7 +65,10 @@ fun Route.aguaRouter(controller: AguaController) {
                 val idRol = principal?.payload?.getClaim("idRol")?.asInt() ?: 0
 
                 if (idRol != 2) {
-                    call.respond(HttpStatusCode.Forbidden, ErrorResponse("Acceso denegado. No tienes autorización para modificar metas de hábitos."))
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        AguaErrorResponse(code = "ACCESO_DENEGADO", message = "Acceso denegado. No tienes autorización para modificar metas de hábitos.")
+                    )
                     return@put
                 }
 

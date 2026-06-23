@@ -5,8 +5,7 @@ import com.alilopez.modules.usuarios.application.usecase.EliminarUseCase
 import com.alilopez.modules.usuarios.application.usecase.VerPerfilUseCase
 import com.alilopez.modules.usuarios.application.usecase.VerTodoUseCase
 import com.alilopez.modules.usuarios.application.usecase.ActualizarFotoPerfilUseCase
-import com.alilopez.modules.usuarios.infrastructure.rest.dto.UsuarioRequests
-import com.alilopez.modules.usuarios.infrastructure.rest.dto.toResponse
+import com.alilopez.modules.usuarios.infrastructure.rest.dto.*
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.*
 import io.ktor.server.application.ApplicationCall
@@ -25,7 +24,10 @@ class UsuarioController(
 ) {
     suspend fun actualizar(call: ApplicationCall) {
         val idAActualizar = call.parameters["id"]?.toIntOrNull()
-            ?: return call.respond(HttpStatusCode.BadRequest, "ID inválido")
+            ?: return call.respond(
+                HttpStatusCode.BadRequest,
+                UsuarioErrorResponse(code = "ID_INVALIDO", message = "El ID de usuario proporcionado no es válido.")
+            )
 
         try {
             val request = call.receive<UsuarioRequests>()
@@ -37,18 +39,30 @@ class UsuarioController(
             call.respond(HttpStatusCode.OK, resultado.toResponse())
 
         } catch (e: SecurityException) {
-            call.respond(HttpStatusCode.Forbidden, e.message ?: "Acceso denegado")
+            call.respond(
+                HttpStatusCode.Forbidden,
+                UsuarioErrorResponse(code = "ACCESO_DENEGADO", message = e.message ?: "No tienes permisos para modificar este perfil.")
+            )
         } catch (e: NoSuchElementException) {
-            call.respond(HttpStatusCode.NotFound, e.message ?: "No encontrado")
+            call.respond(
+                HttpStatusCode.NotFound,
+                UsuarioErrorResponse(code = "USUARIO_NOT_FOUND", message = e.message ?: "El usuario a actualizar no existe.")
+            )
         } catch (e: Exception) {
-            call.respond(HttpStatusCode.InternalServerError, "Error al actualizar")
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                UsuarioErrorResponse(code = "ERROR_SERVIDOR", message = "Error interno al intentar actualizar los datos.")
+            )
         }
     }
 
     suspend fun actualizarFotoPerfil(call: ApplicationCall) {
         val idAutenticado = obtenerIdSolicitante(call)
         if (idAutenticado == 0) {
-            return call.respond(HttpStatusCode.Unauthorized, "Token inválido o expirado")
+            return call.respond(
+                HttpStatusCode.Unauthorized,
+                UsuarioErrorResponse(code = "TOKEN_INVALIDO", message = "Token inválido o sesión expirada.")
+            )
         }
 
         try {
@@ -67,44 +81,70 @@ class UsuarioController(
             if (urlFotoResultante != null) {
                 call.respond(
                     HttpStatusCode.OK,
-                    mapOf("mensaje" to "Foto de perfil actualizada con éxito", "url" to urlFotoResultante)
+                    FotoPerfilResponse(mensaje = "Foto de perfil actualizada con éxito", url = urlFotoResultante!!)
                 )
             } else {
-                call.respond(HttpStatusCode.BadRequest, "No se proporcionó ningún archivo de imagen válido")
+                call.respond(
+                    HttpStatusCode.BadRequest,
+                    UsuarioErrorResponse(code = "ARCHIVO_REQUERIDO", message = "No se proporcionó ningún archivo de imagen válido.")
+                )
             }
 
         } catch (e: IllegalArgumentException) {
-            call.respond(HttpStatusCode.BadRequest, e.message ?: "Datos inválidos")
+            call.respond(
+                HttpStatusCode.BadRequest,
+                UsuarioErrorResponse(code = "FORMATO_INVALIDO", message = e.message ?: "Estructura o formato de imagen no admitido.")
+            )
         } catch (e: SecurityException) {
-            call.respond(HttpStatusCode.Forbidden, e.message ?: "No autorizado")
+            call.respond(
+                HttpStatusCode.Forbidden,
+                UsuarioErrorResponse(code = "NO_AUTORIZADO", message = e.message ?: "No tienes autorización para realizar esta acción.")
+            )
         } catch (e: Exception) {
-            e.printStackTrace()
-            call.respond(HttpStatusCode.InternalServerError, "Error del servidor al procesar la foto de perfil")
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                UsuarioErrorResponse(code = "ERROR_MULTIMEDIA", message = "Error del servidor al procesar la foto de perfil.")
+            )
         }
     }
 
     suspend fun eliminar(call: ApplicationCall) {
         val idAEliminar = call.parameters["id"]?.toIntOrNull()
-            ?: return call.respond(HttpStatusCode.BadRequest, "ID inválido")
+            ?: return call.respond(
+                HttpStatusCode.BadRequest,
+                UsuarioErrorResponse(code = "ID_INVALIDO", message = "El ID de usuario proporcionado no es válido.")
+            )
 
         val idAutenticado = obtenerIdSolicitante(call)
         val rolAutenticado = obtenerRolSolicitante(call)
 
         try {
             eliminarUseCase.execute(idAEliminar, idAutenticado, rolAutenticado)
-            call.respond(HttpStatusCode.OK, "Usuario eliminado correctamente")
+            call.respond(HttpStatusCode.OK, UsuarioMensajeResponse("Usuario eliminado correctamente."))
         } catch (e: SecurityException) {
-            call.respond(HttpStatusCode.Forbidden, e.message ?: "Acceso denegado")
+            call.respond(
+                HttpStatusCode.Forbidden,
+                UsuarioErrorResponse(code = "ACCESO_DENEGADO", message = e.message ?: "No posees los permisos requeridos para eliminar esta cuenta.")
+            )
         } catch (e: NoSuchElementException) {
-            call.respond(HttpStatusCode.NotFound, e.message ?: "No encontrado")
+            call.respond(
+                HttpStatusCode.NotFound,
+                UsuarioErrorResponse(code = "USUARIO_NOT_FOUND", message = e.message ?: "El usuario solicitado no existe.")
+            )
         } catch (e: Exception) {
-            call.respond(HttpStatusCode.InternalServerError, "Error al eliminar")
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                UsuarioErrorResponse(code = "ERROR_SERVIDOR", message = "Error interno al procesar la eliminación.")
+            )
         }
     }
 
     suspend fun verPerfil(call: ApplicationCall) {
         val idConsultado = call.parameters["id"]?.toIntOrNull()
-            ?: return call.respond(HttpStatusCode.BadRequest, "ID inválido")
+            ?: return call.respond(
+                HttpStatusCode.BadRequest,
+                UsuarioErrorResponse(code = "ID_INVALIDO", message = "El ID de usuario proporcionado no es válido.")
+            )
 
         val idAutenticado = obtenerIdSolicitante(call)
 
@@ -112,11 +152,20 @@ class UsuarioController(
             val usuario = verPerfilUseCase.execute(idConsultado, idAutenticado)
             call.respond(HttpStatusCode.OK, usuario.toResponse())
         } catch (e: SecurityException) {
-            call.respond(HttpStatusCode.Forbidden, e.message ?: "Acceso denegado")
+            call.respond(
+                HttpStatusCode.Forbidden,
+                UsuarioErrorResponse(code = "ACCESO_DENEGADO", message = e.message ?: "No estás autorizado para consultar este perfil.")
+            )
         } catch (e: NoSuchElementException) {
-            call.respond(HttpStatusCode.NotFound, e.message ?: "No encontrado")
+            call.respond(
+                HttpStatusCode.NotFound,
+                UsuarioErrorResponse(code = "USUARIO_NOT_FOUND", message = e.message ?: "Perfil de usuario no localizado.")
+            )
         } catch (e: Exception) {
-            call.respond(HttpStatusCode.InternalServerError, "Error interno del servidor")
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                UsuarioErrorResponse(code = "ERROR_SERVIDOR", message = "Error interno al obtener los detalles del perfil.")
+            )
         }
     }
 
@@ -134,9 +183,15 @@ class UsuarioController(
             val lista = verTodoUseCase.execute(rolAutenticado, filtroTipo)
             call.respond(HttpStatusCode.OK, lista.map { it.toResponse() })
         } catch (e: SecurityException) {
-            call.respond(HttpStatusCode.Forbidden, e.message ?: "Acceso denegado")
+            call.respond(
+                HttpStatusCode.Forbidden,
+                UsuarioErrorResponse(code = "ACCESO_DENEGADO", message = e.message ?: "Acceso denegado. Rol insuficiente.")
+            )
         } catch (e: Exception) {
-            call.respond(HttpStatusCode.InternalServerError, "Error al consultar la lista")
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                UsuarioErrorResponse(code = "ERROR_SERVIDOR", message = "Error al consultar la lista de usuarios.")
+            )
         }
     }
 
