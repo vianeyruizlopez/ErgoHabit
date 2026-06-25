@@ -5,4 +5,5 @@ import com.alilopez.modules.autentificacion.domain.model.Registro
 interface AutentificacionRepository {
     suspend fun verPorEmail(email: String): Registro?
     suspend fun registrar(registro: Registro): Registro?
+    suspend fun actualizarContrasena(email: String, nuevaContrasenaEncriptada: String): Boolean
 }

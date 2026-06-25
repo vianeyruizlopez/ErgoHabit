@@ -2,6 +2,7 @@ package com.alilopez.modules.autentificacion
 
 import com.alilopez.modules.autentificacion.application.usecase.LoginUseCase
 import com.alilopez.modules.autentificacion.application.usecase.RegistrarUseCase
+import com.alilopez.modules.autentificacion.application.usecase.RestablecerPasswordUseCase
 import com.alilopez.modules.autentificacion.domain.repository.AutentificacionRepository
 import com.alilopez.modules.autentificacion.infrastructure.persistence.AutentificacionRepositoryImpl
 import com.alilopez.modules.autentificacion.infrastructure.rest.AutentificacionController
@@ -12,5 +13,6 @@ val autentificacionModule = module {
 
     factory { LoginUseCase(get()) }
     factory { RegistrarUseCase(get()) }
-    factory { AutentificacionController(get(), get()) }
+    factory { RestablecerPasswordUseCase(get()) }
+    factory { AutentificacionController(get(), get(),get()) }
 }

@@ -46,4 +46,10 @@ class AutentificacionRepositoryImpl : AutentificacionRepository {
             .map { toDomainConRol(it) }
             .singleOrNull()
     }
+    override suspend fun actualizarContrasena(email: String, nuevaContrasenaEncriptada: String): Boolean = newSuspendedTransaction {
+        val filasActualizadas = UsuarioTable.update({ UsuarioTable.correo eq email }) {
+            it[contrasenia] = nuevaContrasenaEncriptada
+        }
+        filasActualizadas > 0
+    }
 }

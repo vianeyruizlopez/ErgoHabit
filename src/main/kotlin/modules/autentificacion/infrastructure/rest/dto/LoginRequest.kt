@@ -7,3 +7,10 @@ data class LoginRequest(
     val email: String,
     val contrasena: String
 )
+
+@Serializable
+data class RestablecerPasswordRequest(
+    val email: String,
+    val nuevaContrasena: String,
+    val confirmarContrasena: String
+)

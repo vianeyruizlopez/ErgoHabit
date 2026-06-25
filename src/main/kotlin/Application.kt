@@ -11,6 +11,8 @@ import com.alilopez.modules.usuarioFinal.ejercicio.infrastructure.rest.Ejercicio
 import com.alilopez.modules.usuarioFinal.ejercicio.infrastructure.rest.ejercicioRouter
 import com.alilopez.modules.usuarioFinal.ergonomia.infrastructure.rest.PosturaController
 import com.alilopez.modules.usuarioFinal.ergonomia.infrastructure.rest.posturaRouter
+import com.alilopez.modules.usuarioFinal.frases.infrastructure.rest.FrasesController
+import com.alilopez.modules.usuarioFinal.frases.infrastructure.rest.frasesRouter
 import com.alilopez.modules.usuarioFinal.nutricion.infrastructure.rest.NutricionController
 import com.alilopez.modules.usuarioFinal.nutricion.infrastructure.rest.nutricionRouter
 import com.alilopez.modules.usuarioFinal.progresoDiario.infrastructure.rest.ProgresoDiarioController
@@ -22,6 +24,7 @@ import com.alilopez.modules.usuarioFinal.tarea.infrastructure.rest.tareaRouter
 import com.alilopez.modules.usuarioTester.ergonomia.infrestructure.rest.posturaModule
 import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.aguaModule
 import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.ejercicioModule
+import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.fraseModule
 import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.nutricionModule
 import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.progresoDiarioModule
 import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.suenoModule
@@ -56,7 +59,8 @@ fun Application.module() {
             nutricionModule,
             ejercicioModule,
             tareaModule,
-            posturaModule
+            posturaModule,
+            fraseModule
             )
     }
 
@@ -91,6 +95,7 @@ fun Application.module() {
     val ejercicioController by inject<EjercicioController>()
     val tareaController by inject<TareaController>()
     val posturaController by inject<PosturaController>()
+    val frasesController by inject<FrasesController>()
 
     routing {
         usuarioRouting(usuarioController)
@@ -102,5 +107,6 @@ fun Application.module() {
         ejercicioRouter(ejercicioController)
         tareaRouter(tareaController)
         posturaRouter(posturaController)
+        frasesRouter(frasesController)
     }
 }
