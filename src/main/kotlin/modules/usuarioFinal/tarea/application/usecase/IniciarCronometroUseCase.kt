@@ -15,7 +15,8 @@ class IniciarCronometroUseCase(private val repository: TareaRepository) {
         }
 
         val tareas = repository.obtenerTareasPendientes(idUsuario)
-        val tieneCronometroActivo = tareas.any { it.idEstado == 3 && it.idTarea != idTarea }
+
+        val tieneCronometroActivo = tareas.any { it.fechaInicioCronometro != null && it.idTarea != idTarea }
         if (tieneCronometroActivo) {
             throw IllegalArgumentException("Ya tienes un cronómetro en progreso. Pausa o termina tu sesión actual antes de iniciar otra.")
         }

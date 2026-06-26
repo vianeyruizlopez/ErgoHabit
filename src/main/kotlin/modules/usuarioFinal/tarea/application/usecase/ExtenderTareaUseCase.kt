@@ -11,7 +11,7 @@ class ExtenderTareaUseCase(private val repository: TareaRepository) {
         val tarea = repository.buscarPorId(idTarea, idUsuario)
             ?: throw IllegalArgumentException("No se encontró la tarea especificada.")
 
-        if (tarea.idEstado != 3) {
+        if (tarea.idEstado != 1 || tarea.fechaInicioCronometro == null) {
             throw IllegalArgumentException("No puedes extender el tiempo de una tarea que no ha iniciado su cronómetro.")
         }
 

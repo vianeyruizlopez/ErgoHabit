@@ -63,7 +63,7 @@ class MysqlTareaRepository : TareaRepository {
         )
             .select {
                 (TareaEnfoqueTable.idUsuario eq idUsuario) and
-                        (TareaEnfoqueTable.idEstado inList listOf(1, 3))
+                        (TareaEnfoqueTable.idEstado eq 1)
             }
             .orderBy(TareaEnfoqueTable.idTarea to SortOrder.DESC)
             .map { toModel(it) }
@@ -137,7 +137,7 @@ class MysqlTareaRepository : TareaRepository {
 
     override fun iniciarCronometroEnBaseDatos(idTarea: Int, idUsuario: Int): Boolean = transaction {
         TareaEnfoqueTable.update({ (TareaEnfoqueTable.idTarea eq idTarea) and (TareaEnfoqueTable.idUsuario eq idUsuario) }) {
-            it[this.idEstado] = 3
+            it[this.idEstado] = 1
             it[this.fechaInicioCronometro] = Instant.now()
         } > 0
     }
@@ -148,6 +148,7 @@ class MysqlTareaRepository : TareaRepository {
         }) {
             it[this.idEstado] = 1
             it[this.duracionTarea] = nuevoTiempoRestante
+            it[this.fechaInicioCronometro] = null
         } > 0
     }
 

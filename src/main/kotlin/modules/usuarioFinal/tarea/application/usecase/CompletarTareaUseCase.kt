@@ -10,8 +10,8 @@ class CompletarTareaUseCase(private val repository: TareaRepository) {
         val tarea = repository.buscarPorId(idTarea, idUsuario)
             ?: throw IllegalArgumentException("Tarea no encontrada o no tienes permiso para acceder a ella.")
 
-        if (tarea.idEstado != 3) {
-            throw IllegalArgumentException("Solo puedes terminar una tarea que está activa o en proceso.")
+        if (tarea.idEstado != 1) {
+            throw IllegalArgumentException("Solo puedes terminar una tarea que esté activa o pendiente.")
         }
 
         return repository.cambiarEstadoTarea(idTarea, idUsuario, nuevoEstado = 2)
