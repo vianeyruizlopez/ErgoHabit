@@ -14,7 +14,7 @@ class ObtenerProgresoEjercicioUseCase(private val repository: EjercicioRepositor
         val hoy = LocalDate.now(ZoneId.systemDefault())
         val fechaInicio = hoy.minusDays(6)
         val ultimos7Dias = (0..6).map { hoy.minusDays(it.toLong()) }.reversed()
-
+        val metaUsuarioKm = repository.obtenerMetaKilometros(idUsuario).toDouble()
         val registrosEjercicio = repository.obtenerHistorialSemanal(idUsuario, fechaInicio)
 
         val datosGrafica = ultimos7Dias.map { fecha ->
@@ -27,14 +27,14 @@ class ObtenerProgresoEjercicioUseCase(private val repository: EjercicioRepositor
             ElementoBarraGrafica(
                 diaSemana = nombreDia.take(3),
                 valor = kilometros,
-                metaCumplida = kilometros >= 8.0,
+                metaCumplida = kilometros >= metaUsuarioKm,
                 esHoy = fecha == hoy
             )
         }
 
         return HistorialHabitoResponse(
             tituloSeccion = "DISTANCIA RECORRIDA (KM) · ÚLTIMOS 7 DÍAS",
-            mensajeMeta = "Verde = meta cumplida - Rojo = por debajo de 8 km",
+            mensajeMeta = "Verde = meta cumplida - Rojo = por debajo de $metaUsuarioKm km",
             datosGrafica = datosGrafica
         )
     }

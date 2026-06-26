@@ -13,19 +13,15 @@ class ObtenerProgresoSemanalUseCase(private val repository: PosturaRepository) {
     suspend fun ejecutar(idUsuario: Int): ProgresoPosturaResponse {
         val hoy = LocalDate.now(ZoneId.systemDefault())
 
-        // Generamos secuencialmente los últimos 7 días (del más viejo a hoy)
         val ultimos7Dias = (0..6).map { hoy.minusDays(it.toLong()) }.reversed()
 
-        // Consultamos los registros reales en la BD
         val historial = repository.obtenerHistorialUsuario(idUsuario)
 
         val datosGrafica = ultimos7Dias.map { fecha ->
-            // Buscamos si hay un registro guardado que coincida con este día
             val registroDia = historial.find { postura ->
                 LocalDate.ofInstant(postura.fecha, ZoneId.systemDefault()) == fecha
             }
 
-            // Formateamos el nombre legible del día ("Lun", "Mar", "Hoy")
             val nombreDia = if (fecha == hoy) "Hoy" else fecha.dayOfWeek
                 .getDisplayName(TextStyle.SHORT, Locale("es", "MX"))
                 .replaceFirstChar { it.uppercase() }
@@ -38,7 +34,7 @@ class ObtenerProgresoSemanalUseCase(private val repository: PosturaRepository) {
         }
 
         return ProgresoPosturaResponse(
-            mensajeMeta = "Menos alertas ⚠️ = mejor postura durante la semana 📉",
+            mensajeMeta = "Monitoreo: El objetivo es reducir las barras. Menos alertas indican menor fatiga cervical.",
             datosGrafica = datosGrafica
         )
     }

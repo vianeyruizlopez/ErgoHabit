@@ -15,6 +15,10 @@ class ObtenerProgresoAguaUseCase(private val repository: AguaRepository) {
         val fechaInicio = hoy.minusDays(6)
         val ultimos7Dias = (0..6).map { hoy.minusDays(it.toLong()) }.reversed()
 
+        val dashboard = repository.obtenerDashboard(idUsuario)
+        val metaUsuarioMl = dashboard.metaDiariaMl
+        val metaEnLitros = metaUsuarioMl / 1000.0
+
         val registrosAgua = repository.obtenerHistorialSemanal(idUsuario, fechaInicio)
 
         val datosGrafica = ultimos7Dias.map { fecha ->
@@ -28,14 +32,14 @@ class ObtenerProgresoAguaUseCase(private val repository: AguaRepository) {
             ElementoBarraGrafica(
                 diaSemana = nombreDia.take(3),
                 valor = valorEnLitros,
-                metaCumplida = totalMl >= 2000,
+                metaCumplida = totalMl >= metaUsuarioMl,
                 esHoy = fecha == hoy
             )
         }
 
         return HistorialHabitoResponse(
             tituloSeccion = "HIDRATACIÓN (L) · ÚLTIMOS 7 DÍAS",
-            mensajeMeta = "Verde = meta cumplida  Rojo = menos de 2,000 ml",
+            mensajeMeta = "Verde = meta cumplida  Rojo = menos de $metaEnLitros L",
             datosGrafica = datosGrafica
         )
     }
