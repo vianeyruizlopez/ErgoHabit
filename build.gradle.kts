@@ -48,18 +48,4 @@ dependencies {
     //encriptar contrasena
     implementation("org.mindrot:jbcrypt:0.4")
 }
-tasks.shadowJar {
-    archiveClassifier.set("all")
 
-    manifest {
-        attributes(
-            "Main-Class" to "io.ktor.server.netty.EngineMain"
-        )
-    }
-
-    mergeServiceFiles()
-}
-
-tasks.build {
-    dependsOn(tasks.shadowJar)
-}

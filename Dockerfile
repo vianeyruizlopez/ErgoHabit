@@ -1,14 +1,8 @@
-# Paso 1: Compilar la aplicación usando Gradle con JDK 17
-FROM gradle:7.6-jdk17 AS build
-COPY --chown=gradle:gradle . /home/src
-WORKDIR /home/src
-# LE DAMOS PERMISOS DIRECTAMENTE AQUÍ DENTRO DEL CONTENEDOR:
-RUN chmod +x gradlew
-RUN ./gradlew build -x test --no-daemon
-
-# Paso 2: Ejecutar el archivo JAR generado en un entorno ligero
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 EXPOSE 8080
 RUN mkdir /app
-COPY --from=build /home/src/build/libs/*-all.jar /app/ergo-habit.jar
+
+# Copia el archivo FatJar que genera el plugin oficial de Ktor
+COPY build/libs/*.jar /app/ergo-habit.jar
+
 ENTRYPOINT ["java", "-jar", "/app/ergo-habit.jar"]
