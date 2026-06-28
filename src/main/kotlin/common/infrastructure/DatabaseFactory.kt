@@ -4,36 +4,36 @@ import com.alilopez.modules.usuarios.infrastructure.persistence.UsuarioTable
 import com.alilopez.modules.catalogosRol.infrastructure.persistence.RolTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import io.github.cdimascio.dotenv.dotenv
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
     fun init() {
-        val dotenv = dotenv { ignoreIfMissing = true }
-
         val config = HikariConfig().apply {
             driverClassName = "com.mysql.cj.jdbc.Driver"
 
-            var url = dotenv["DB_URL"] ?: System.getenv("DB_URL")
+            val url = System.getenv("DB_URL")
 
-            if (url == null) {
-                val host = dotenv["DB_HOST"] ?: System.getenv("DB_HOST")
-                val port = dotenv["DB_PORT"] ?: System.getenv("DB_PORT") ?: "3306"
-                val name = dotenv["DB_NAME"] ?: System.getenv("DB_NAME")
+            if (url != null) {
+                jdbcUrl = url
+            } else {
+                val host = System.getenv("DB_HOST")
+                val port = System.getenv("DB_PORT") ?: "3306"
+                val name = System.getenv("DB_NAME")
 
                 if (host != null && name != null) {
-                    url = "jdbc:mysql://$host:$port/$name?useSSL=false&serverTimezone=UTC"
+                    jdbcUrl = "jdbc:mysql://$host:$port/$name?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"
+                } else {
+                    throw IllegalArgumentException("¡ERROR! No se pudo configurar la URL de la base de datos.")
                 }
             }
 
-            jdbcUrl = url ?: throw IllegalArgumentException("¡ERROR! No se pudo configurar la URL de la base de datos (DB_URL o DB_HOST/DB_NAME no encontrados).")
-            username = dotenv["DB_USER"] ?: System.getenv("DB_USER")
-                    ?: throw IllegalArgumentException("¡ERROR! Falta configurar DB_USER en el entorno.")
+            username = System.getenv("DB_USER")
+                ?: throw IllegalArgumentException("¡ERROR! Falta configurar DB_USER.")
 
-            password = dotenv["DB_PASSWORD"] ?: System.getenv("DB_PASSWORD")
-                    ?: throw IllegalArgumentException("¡ERROR! Falta configurar DB_PASSWORD en el entorno.")
+            password = System.getenv("DB_PASSWORD")
+                ?: throw IllegalArgumentException("¡ERROR! Falta configurar DB_PASSWORD.")
 
             maximumPoolSize = 10
             connectionTimeout = 30000
@@ -43,10 +43,7 @@ object DatabaseFactory {
         Database.connect(dataSource)
 
         transaction {
-            SchemaUtils.create(
-                RolTable,
-                UsuarioTable
-            )
+            SchemaUtils.create(RolTable, UsuarioTable)
         }
     }
 }
