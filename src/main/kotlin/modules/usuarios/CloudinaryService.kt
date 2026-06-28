@@ -2,17 +2,14 @@ package com.alilopez.modules.usuarios
 
 import com.cloudinary.Cloudinary
 import com.cloudinary.utils.ObjectUtils
-import io.github.cdimascio.dotenv.dotenv
 import java.io.InputStream
 
 class CloudinaryService {
-    private val env = dotenv()
-
     private val cloudinary = Cloudinary(
         ObjectUtils.asMap(
-            "cloud_name", env["CLOUDINARY_CLOUD_NAME"],
-            "api_key", env["CLOUDINARY_API_KEY"],
-            "api_secret", env["CLOUDINARY_API_SECRET"]
+            "cloud_name", System.getenv("CLOUDINARY_CLOUD_NAME"),
+            "api_key", System.getenv("CLOUDINARY_API_KEY"),
+            "api_secret", System.getenv("CLOUDINARY_API_SECRET")
         )
     )
 
