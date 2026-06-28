@@ -11,8 +11,15 @@ class ExtenderTareaUseCase(private val repository: TareaRepository) {
         val tarea = repository.buscarPorId(idTarea, idUsuario)
             ?: throw IllegalArgumentException("No se encontró la tarea especificada.")
 
-        if (tarea.idEstado != 1 || tarea.fechaInicioCronometro == null) {
-            throw IllegalArgumentException("No puedes extender el tiempo de una tarea que no ha iniciado su cronómetro.")
+        if (tarea.idEstado != 1) {
+            throw IllegalArgumentException("Solo puedes extender tareas pendientes o en curso.")
+        }
+
+        val cronometroActivo = tarea.fechaInicioCronometro != null
+        val pausadoPeroTerminado = tarea.fechaInicioCronometro == null && tarea.duracionTarea == 0
+
+        if (!cronometroActivo && !pausadoPeroTerminado) {
+            throw IllegalArgumentException("No puedes extender el tiempo de una tarea pausada que aún tiene minutos pendientes.")
         }
 
         val nuevaDuracionProyectada = tarea.duracionTarea + minutosExtra

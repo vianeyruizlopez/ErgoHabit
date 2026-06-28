@@ -10,10 +10,6 @@ class PausarTareaUseCase(private val repository: TareaRepository) {
         val tarea = repository.buscarPorId(idTarea, idUsuario)
             ?: throw IllegalArgumentException("Tarea no encontrada.")
 
-        if (tarea.idEstado != 3) {
-            throw IllegalArgumentException("Solo puedes pausar una tarea que está activa.")
-        }
-
         val inicio = tarea.fechaInicioCronometro ?: Instant.now()
         val minutosConsumidos = Duration.between(inicio, Instant.now()).toMinutes().toInt()
         val nuevaDuracionRestante = maxOf(0, tarea.duracionTarea - minutosConsumidos)

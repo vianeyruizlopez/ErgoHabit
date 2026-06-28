@@ -143,12 +143,17 @@ class MysqlTareaRepository : TareaRepository {
     }
 
     override fun guardarPausaEnBaseDatos(idTarea: Int, idUsuario: Int, nuevoTiempoRestante: Int): Boolean = transaction {
+        val tareaActual = buscarPorId(idTarea, idUsuario)
         TareaEnfoqueTable.update({
             (TareaEnfoqueTable.idTarea eq idTarea) and (TareaEnfoqueTable.idUsuario eq idUsuario)
         }) {
             it[this.idEstado] = 1
             it[this.duracionTarea] = nuevoTiempoRestante
-            it[this.fechaInicioCronometro] = null
+            if (nuevoTiempoRestante == 0) {
+                it[this.fechaInicioCronometro] = tareaActual?.fechaInicioCronometro
+            } else {
+                it[this.fechaInicioCronometro] = null
+            }
         } > 0
     }
 
