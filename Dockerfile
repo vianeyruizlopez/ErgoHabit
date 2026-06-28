@@ -2,6 +2,8 @@
 FROM gradle:7.6-jdk17 AS build
 COPY --chown=gradle:gradle . /home/src
 WORKDIR /home/src
+# LE DAMOS PERMISOS DIRECTAMENTE AQUÍ DENTRO DEL CONTENEDOR:
+RUN chmod +x gradlew
 RUN ./gradlew build -x test --no-daemon
 
 # Paso 2: Ejecutar el archivo JAR generado en un entorno ligero
