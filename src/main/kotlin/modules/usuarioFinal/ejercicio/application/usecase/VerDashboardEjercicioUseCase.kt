@@ -24,19 +24,19 @@ class VerDashboardEjercicioUseCase(
         } else {
             0
         }
-        val faltantes = metaKm.subtract(kmLlevados)
+        val faltantes = metaKm.subtract(kmLlevados).max(BigDecimal.ZERO)
         val mensajeFaltanteText: String
         val sugerenciaCaminataText: String
 
-        if (faltantes <= BigDecimal.ZERO) {
+        if (kmLlevados >= metaKm && metaKm > BigDecimal.ZERO) {
             mensajeFaltanteText = "¡Meta diaria alcanzada!"
-            sugerenciaCaminataText = "¡Excelente trabajo! Has cumplido tu objetivo de hoy. ️"
+            sugerenciaCaminataText = "¡Excelente trabajo! Has cumplido tu objetivo de hoy."
         } else {
             val faltantesFormateado = faltantes.setScale(2, RoundingMode.HALF_UP)
             mensajeFaltanteText = "¡Te faltan $faltantesFormateado km!"
 
             val minutosEstimados = faltantes.multiply(BigDecimal("10")).toInt().coerceAtLeast(5)
-            sugerenciaCaminataText = "Una caminata de $minutosEstimados minutos te acercará a tu meta ️"
+            sugerenciaCaminataText = "Una caminata de $minutosEstimados minutos te acercará a tu meta"
         }
 
         val categoriaFrase = if (porcentaje >= 100) "TAREA_EXITO" else "TAREA_PENDIENTE"

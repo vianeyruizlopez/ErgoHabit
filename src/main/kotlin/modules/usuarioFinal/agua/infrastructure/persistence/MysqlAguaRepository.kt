@@ -26,8 +26,6 @@ class MysqlAguaRepository : AguaRepository {
             .select { (ProgresoAguaTable.idUsuario eq idUsuario) and (ProgresoAguaTable.fecha eq hoy) }
             .singleOrNull()
 
-        val consumidoHoy = progresoRow?.get(ProgresoAguaTable.cantidadConsumida) ?: 0
-
         val usuarioRow = UsuarioTable
             .select { UsuarioTable.idUsuario eq idUsuario }
             .singleOrNull()
@@ -50,7 +48,15 @@ class MysqlAguaRepository : AguaRepository {
                 )
             }
 
-        val porcentaje = if (metaConfigurada > 0) ((consumidoHoy * 100) / metaConfigurada) else 0
+        val consumidoProgreso = progresoRow?.get(ProgresoAguaTable.cantidadConsumida) ?: 0
+        val consumidoDetalle = historial.sumOf { it.cantidadMl }
+        val consumidoHoy = if (historial.isNotEmpty()) consumidoDetalle else consumidoProgreso
+
+        val porcentaje = if (metaConfigurada > 0) {
+            ((consumidoHoy * 100) / metaConfigurada).coerceAtMost(100)
+        } else {
+            0
+        }
         val vasos = consumidoHoy / 250
         val restante = (metaConfigurada - consumidoHoy).coerceAtLeast(0)
 

@@ -26,10 +26,17 @@ class MysqlTareaRepository : TareaRepository {
     }
 
     override fun crearTarea(idUsuario: Int, titulo: String, categoria: String, duracion: Int): TareaEnfoque = transaction {
-        val idCat = CategoriasTareasTable
+        val categoriaExistente = CategoriasTareasTable
             .select { CategoriasTareasTable.nombreCategoria eq categoria }
-            .map { it[CategoriasTareasTable.idCategoria] }
-            .singleOrNull() ?: 1
+            .singleOrNull()
+
+        val idCat = if (categoriaExistente != null) {
+            categoriaExistente[CategoriasTareasTable.idCategoria]
+        } else {
+            CategoriasTareasTable.insert {
+                it[this.nombreCategoria] = categoria
+            } get CategoriasTareasTable.idCategoria
+        }
 
         val idInsercion = TareaEnfoqueTable.insert {
             it[this.idUsuario] = idUsuario
