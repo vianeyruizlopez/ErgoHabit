@@ -63,7 +63,10 @@ class TareaController(
         } catch (e: Exception) {
             call.respond(
                 HttpStatusCode.BadRequest,
-                TareaErrorResponse(code = "JSON_INVALIDO", message = "Estructura de la petición inválida.")
+                TareaErrorResponse(
+                    code = "ERROR_CREAR_TAREA",
+                    message = e.message ?: "No se pudo crear la tarea."
+                )
             )
         }
     }

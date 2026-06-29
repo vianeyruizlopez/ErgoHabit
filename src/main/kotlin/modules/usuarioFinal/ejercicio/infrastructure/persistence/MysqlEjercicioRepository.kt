@@ -11,10 +11,15 @@ import java.time.LocalDate
 class MysqlEjercicioRepository : EjercicioRepository {
 
     override fun obtenerMetaKilometros(idUsuario: Int): BigDecimal = transaction {
-        ConfiguracionHabitos
+        val meta = ConfiguracionHabitos
             .select { ConfiguracionHabitos.idUsuario eq idUsuario }
             .map { it[ConfiguracionHabitos.metaEjercicio] }
-            .singleOrNull() ?: BigDecimal("8.0")
+            .singleOrNull()
+
+        when {
+            meta == null || meta <= BigDecimal.ZERO -> BigDecimal("8.0")
+            else -> meta
+        }
     }
 
     override fun obtenerHistorialSemanal(idUsuario: Int, desdeFecha: LocalDate): Map<LocalDate, Double> = transaction {

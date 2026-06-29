@@ -48,7 +48,20 @@ class MysqlProgresoDiarioRepo : ProgresoDiarioRepository {
             if (rs.next()) diasRacha = rs.getInt("dias_consecutivos")
         }
 
-        val comidasCompletadas = 2
+        var comidasCompletadas = 0
+        exec(
+            """
+            SELECT realizo_desayuno, realizo_comida, realizo_cena
+            FROM progreso_nutricion
+            WHERE id_usuario = $idUsuario AND fecha = '$hoy'
+            """.trimIndent()
+        ) { rs ->
+            if (rs.next()) {
+                if (rs.getBoolean("realizo_desayuno")) comidasCompletadas++
+                if (rs.getBoolean("realizo_comida")) comidasCompletadas++
+                if (rs.getBoolean("realizo_cena")) comidasCompletadas++
+            }
+        }
 
         ProgresosDiarioDB(
             metaAgua = metaAgua,
