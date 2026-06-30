@@ -34,10 +34,14 @@ class VerProgresoDiarioUseCase(
 
         val metaComidasFija = 3
 
-        val pctAgua = (datosBD.aguaConsumida.toDouble() / datosBD.metaAgua) * 100
-        val pctSueno = (datosBD.horasSueno / 8.0) * 100
-        val pctEjercicio = if (datosBD.metaEjercicio > 0) (datosBD.kmRecorridos / datosBD.metaEjercicio) * 100 else 0.0
-        val pctNutricion = (datosBD.comidasCompletadas.toDouble() / metaComidasFija) * 100
+        val pctAgua = ((datosBD.aguaConsumida.toDouble() / datosBD.metaAgua) * 100).coerceAtMost(100.0)
+        val pctSueno = ((datosBD.horasSueno / 8.0) * 100).coerceAtMost(100.0)
+        val pctEjercicio = if (datosBD.metaEjercicio > 0) {
+            ((datosBD.kmRecorridos / datosBD.metaEjercicio) * 100).coerceAtMost(100.0)
+        } else {
+            0.0
+        }
+        val pctNutricion = ((datosBD.comidasCompletadas.toDouble() / metaComidasFija) * 100).coerceAtMost(100.0)
 
         return ProgresoDiario(
             nombreUsuario = nombre,
