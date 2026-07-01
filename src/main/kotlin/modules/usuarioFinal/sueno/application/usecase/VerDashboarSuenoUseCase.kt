@@ -39,10 +39,10 @@ class VerDashboarSuenoUseCase(
 
         val formatter = DateTimeFormatter.ofPattern("HH:mm")
 
-        val categoriaFrase = if (despertoATiempo && porcentaje >= 85) "TAREA_EXITO" else "TAREA_PENDIENTE"
-        val fraseAleatoria = frasesRepository.obtenerFraseAleatoriaPorCategoria(categoriaFrase)?.texto
-            ?: "Un buen descanso es la clave para un día productivo."
+        val categoriaFrase = if (despertoATiempo && porcentaje >= 85) "SUENO_EXITO" else "SUENO_PENDIENTE"
 
+        val fraseAleatoria = frasesRepository.obtenerFraseAleatoriaPorCategoria(categoriaFrase)?.texto
+            ?: "Un buen descanso es la clave para un día productivo"
         val tips = frasesRepository.obtenerTodasPorCategoria("DORMIR").map { it.texto }
 
         return SuenoResponse(
