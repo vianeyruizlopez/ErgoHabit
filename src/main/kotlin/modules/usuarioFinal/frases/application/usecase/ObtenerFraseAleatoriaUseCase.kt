@@ -11,7 +11,7 @@ class ObtenerFraseAleatoriaUseCase(
             return repository.obtenerFraseAleatoriaPorCategoria(categoria.trim().uppercase())
                 ?: throw NoSuchElementException("No se encontraron frases para la categoría: $categoria")
         }
-        val categoriasPorDefecto = listOf("TAREA_EXITO", "SUENO", "NUTRICION", "ERGONOMIA")
+        val categoriasPorDefecto = listOf("TAREA_EXITO", "SUENO", "NUTRICION", "ERGONOMIA","MOTIVACION")
 
         val todasLasFrases = categoriasPorDefecto.flatMap { cat ->
             repository.obtenerTodasPorCategoria(cat)
