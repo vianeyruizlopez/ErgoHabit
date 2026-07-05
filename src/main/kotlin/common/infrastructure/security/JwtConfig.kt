@@ -16,6 +16,6 @@ object JwtConfig {
         .withIssuer(issuer)
         .withClaim("idUsuario", id)
         .withClaim("idRol", idRol)
-        .withExpiresAt(Date(System.currentTimeMillis() + 3600000 * 24))
+        .withExpiresAt(Date(System.currentTimeMillis() + 3600000 * 480))
         .sign(algorithm)
 }
