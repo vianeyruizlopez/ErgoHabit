@@ -70,8 +70,9 @@ class MysqlTareaRepository : TareaRepository {
     }
 
     override fun obtenerTareasCompletadasHoy(idUsuario: Int): List<TareaEnfoque> = transaction {
-        val inicioHoy = LocalDate.now().atStartOfDay(java.time.ZoneId.systemDefault()).toInstant()
-        val finHoy = LocalDate.now().plusDays(1).atStartOfDay(java.time.ZoneId.systemDefault()).toInstant()
+        val zona = java.time.ZoneId.of("America/Mexico_City")
+        val inicioHoy = LocalDate.now(zona).atStartOfDay(zona).toInstant()
+        val finHoy = LocalDate.now(zona).plusDays(1).atStartOfDay(zona).toInstant()
 
         TareaEnfoqueTable.join(
             CategoriasTareasTable,

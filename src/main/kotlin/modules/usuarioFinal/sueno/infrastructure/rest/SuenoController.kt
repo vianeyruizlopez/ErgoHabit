@@ -79,7 +79,7 @@ class SuenoController(
 
     suspend fun registrarDespertar(call: ApplicationCall, idUsuario: Int) {
         try {
-            val horaActual = LocalTime.now()
+            val horaActual = LocalTime.now(java.time.ZoneId.of("America/Mexico_City"))
             val exito = registrarDespertarUseCase.execute(idUsuario, horaActual)
 
             if (exito) {
