@@ -4,10 +4,11 @@ import com.alilopez.modules.usuarioFinal.progresoDiario.domain.model.ProgresosDi
 import com.alilopez.modules.usuarioFinal.progresoDiario.domain.repository.ProgresoDiarioRepository
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDate
+import java.time.ZoneId
 
 class MysqlProgresoDiarioRepo : ProgresoDiarioRepository {
     override suspend fun obtenerDatosCrudosHoy(idUsuario: Int): ProgresosDiarioDB = transaction {
-        val hoy = LocalDate.now()
+        val hoy = LocalDate.now(ZoneId.of("America/Mexico_City"))
 
         var metaAgua = 2450
         var metaEjercicio = 8.0
@@ -82,7 +83,7 @@ class MysqlProgresoDiarioRepo : ProgresoDiarioRepository {
                 tieneFilaRacha = true
                 val diasBaseDatos = rs.getInt("dias_consecutivos")
                 val ultimaActividadTimestamp = rs.getTimestamp("ultima_actividad")?.toInstant()
-                val ultimaFechaBD = ultimaActividadTimestamp?.atZone(java.time.ZoneId.systemDefault())?.toLocalDate()
+                val ultimaFechaBD = ultimaActividadTimestamp?.atZone(ZoneId.of("America/Mexico_City"))?.toLocalDate()
                 val ayer = hoy.minusDays(1)
 
                 if (elDiaCuentaParaRacha) {

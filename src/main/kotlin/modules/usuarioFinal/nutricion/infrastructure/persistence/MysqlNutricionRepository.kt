@@ -8,6 +8,7 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.ZoneId
 import java.math.BigDecimal
 
 class MysqlNutricionRepository : NutricionRepository {
@@ -53,7 +54,7 @@ class MysqlNutricionRepository : NutricionRepository {
     }
 
     override fun registrarConsumoComida(idUsuario: Int, tipoComida: String, estado: Boolean): Boolean = transaction {
-        val hoy = LocalDate.now()
+        val hoy = LocalDate.now(ZoneId.of("America/Mexico_City"))
 
         val registroExistente = NutricionTable
             .select { (NutricionTable.idUsuario eq idUsuario) and (NutricionTable.fecha eq hoy) }
@@ -80,7 +81,7 @@ class MysqlNutricionRepository : NutricionRepository {
     }
 
     override fun obtenerProgresoComidasHoy(idUsuario: Int): ProgresoNutricion? = transaction {
-        val hoy = LocalDate.now()
+        val hoy = LocalDate.now(ZoneId.of("America/Mexico_City"))
 
         NutricionTable
             .select { (NutricionTable.idUsuario eq idUsuario) and (NutricionTable.fecha eq hoy) }

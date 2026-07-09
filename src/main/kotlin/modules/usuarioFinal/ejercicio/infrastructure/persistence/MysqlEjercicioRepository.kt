@@ -7,6 +7,7 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.time.ZoneId
 
 class MysqlEjercicioRepository : EjercicioRepository {
 
@@ -58,7 +59,7 @@ class MysqlEjercicioRepository : EjercicioRepository {
     }
 
     override fun registrarProgresoKm(idUsuario: Int, kmAgradados: BigDecimal, calorias: Int): Boolean = transaction {
-        val hoy = LocalDate.now()
+        val hoy = LocalDate.now(ZoneId.of("America/Mexico_City"))
         val registroExistente = EjercicioTable
             .select { (EjercicioTable.idUsuario eq idUsuario) and (EjercicioTable.fecha eq hoy) }
             .singleOrNull()
@@ -83,7 +84,7 @@ class MysqlEjercicioRepository : EjercicioRepository {
     }
 
     override fun obtenerProgresoHoy(idUsuario: Int): ProgresoEjercicio? = transaction {
-        val hoy = LocalDate.now()
+        val hoy = LocalDate.now(ZoneId.of("America/Mexico_City"))
         EjercicioTable
             .select { (EjercicioTable.idUsuario eq idUsuario) and (EjercicioTable.fecha eq hoy) }
             .map {
@@ -98,7 +99,7 @@ class MysqlEjercicioRepository : EjercicioRepository {
 
     override fun calcularRachaDias(idUsuario: Int): Int = transaction {
         var racha = 0
-        var fechaEvaluar = LocalDate.now()
+        var fechaEvaluar = LocalDate.now(ZoneId.of("America/Mexico_City"))
 
         val hoyRegistro = EjercicioTable.select { (EjercicioTable.idUsuario eq idUsuario) and (EjercicioTable.fecha eq fechaEvaluar) }.singleOrNull()
         if (hoyRegistro == null) {

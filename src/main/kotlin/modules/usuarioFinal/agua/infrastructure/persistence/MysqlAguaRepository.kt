@@ -9,12 +9,14 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class MysqlAguaRepository : AguaRepository {
 
     override fun obtenerDashboard(idUsuario: Int): DashboardAgua = transaction {
-        val hoy = LocalDate.now()
+        val zona = ZoneId.of("America/Mexico_City")
+        val hoy = LocalDate.now(zona)
 
         val metaConfigurada = ConfiguracionHabitos
             .select { ConfiguracionHabitos.idUsuario eq idUsuario }
@@ -58,11 +60,12 @@ class MysqlAguaRepository : AguaRepository {
     }
 
     override fun registrarToma(idUsuario: Int, cantidadMl: Int): Boolean = transaction {
-        val hoy = LocalDate.now()
+        val zona = ZoneId.of("America/Mexico_City")
+        val hoy = LocalDate.now(zona)
         AguaDetalleTable.insert {
             it[this.idUsuario] = idUsuario
             it[this.cantidadMl] = cantidadMl
-            it[this.fechaHora] = LocalDateTime.now()
+            it[this.fechaHora] = LocalDateTime.now(zona)
         }
         val filaExistente = ProgresoAguaTable
             .select { (ProgresoAguaTable.idUsuario eq idUsuario) and (ProgresoAguaTable.fecha eq hoy) }
@@ -104,7 +107,7 @@ class MysqlAguaRepository : AguaRepository {
 
 
     override fun guardarMetaInteligente(idUsuario: Int, metaCalculada: Int, pesoKg: Double, estaturaCm: Double): Boolean = transaction {
-        val hoy = LocalDate.now()
+        val hoy = LocalDate.now(ZoneId.of("America/Mexico_City"))
 
         val registroConfigExistente = ConfiguracionHabitos
             .select { ConfiguracionHabitos.idUsuario eq idUsuario }

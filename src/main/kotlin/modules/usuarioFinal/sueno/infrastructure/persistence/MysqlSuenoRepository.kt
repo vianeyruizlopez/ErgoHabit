@@ -8,6 +8,7 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalTime
 import java.time.LocalDate
+import java.time.ZoneId
 import java.math.BigDecimal
 
 class MysqlSuenoRepository : SuenoRepository {
@@ -47,7 +48,7 @@ class MysqlSuenoRepository : SuenoRepository {
     }
 
     override fun registrarProgresoSuenoDiario(idUsuario: Int, horasDormidas: Double, despertoATiempo: Boolean): Boolean = transaction {
-        val hoy = LocalDate.now()
+        val hoy = LocalDate.now(ZoneId.of("America/Mexico_City"))
 
         val filaExistente = SuenoTable
             .select { (SuenoTable.idUsuario eq idUsuario) and (SuenoTable.fecha eq hoy) }
@@ -70,7 +71,7 @@ class MysqlSuenoRepository : SuenoRepository {
     }
 
     override fun obtenerProgresoHoy(idUsuario: Int): ProgresoSueno? = transaction {
-        val hoy = LocalDate.now()
+        val hoy = LocalDate.now(ZoneId.of("America/Mexico_City"))
 
         SuenoTable
             .select { (SuenoTable.idUsuario eq idUsuario) and (SuenoTable.fecha eq hoy) }
