@@ -111,7 +111,7 @@ class MysqlEjercicioRepository : EjercicioRepository {
                 .select { (EjercicioTable.idUsuario eq idUsuario) and (EjercicioTable.fecha eq fechaEvaluar) }
                 .singleOrNull()
 
-            if (registro != null && registro[EjercicioTable.kmRecorridos] > BigDecimal.ZERO) {
+            if (registro != null) {
                 racha++
                 fechaEvaluar = fechaEvaluar.minusDays(1)
             } else {

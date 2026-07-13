@@ -111,21 +111,21 @@ class MysqlProgresoDiarioRepo : ProgresoDiarioRepository {
                     if (ultimaFechaBD == hoy || ultimaFechaBD == ayer) {
                         diasRacha = diasBaseDatos
                     } else {
-                        diasRacha = 0
-                        requiereActualizarBD = (diasBaseDatos != 0)
-                        nuevoValorBD = 0
+                        diasRacha = diasBaseDatos
                     }
                 }
             }
         }
 
+        val ahoraConZona = java.time.LocalDateTime.now(ZoneId.of("America/Mexico_City"))
+
         try {
             if (!tieneFilaRacha) {
                 val valorInicial = if (elDiaCuentaParaRacha) 1 else 0
-                exec("INSERT INTO racha_usuario (id_usuario, dias_consecutivos, ultima_actividad) VALUES ($idUsuario, $valorInicial, NOW())")
+                exec("INSERT INTO racha_usuario (id_usuario, dias_consecutivos, ultima_actividad) VALUES ($idUsuario, $valorInicial, '$ahoraConZona')")
                 diasRacha = valorInicial
             } else if (requiereActualizarBD) {
-                exec("UPDATE racha_usuario SET dias_consecutivos = $nuevoValorBD, ultima_actividad = NOW() WHERE id_usuario = $idUsuario")
+                exec("UPDATE racha_usuario SET dias_consecutivos = $nuevoValorBD, ultima_actividad = '$ahoraConZona' WHERE id_usuario = $idUsuario")
             }
         } catch (e: Exception) {
             println("Persistencia de racha controlada de forma segura: ${e.message}")
