@@ -118,6 +118,7 @@ class MysqlProgresoDiarioRepo : ProgresoDiarioRepository {
         }
 
         val ahoraConZona = java.time.LocalDateTime.now(ZoneId.of("America/Mexico_City"))
+            .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
 
         try {
             if (!tieneFilaRacha) {
