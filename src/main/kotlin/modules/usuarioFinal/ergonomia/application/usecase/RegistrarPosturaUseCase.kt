@@ -12,7 +12,7 @@ class RegistrarPosturaUseCase(private val repository: PosturaRepository) {
             throw IllegalArgumentException("El conteo de alertas no puede ser negativo.")
         }
 
-        val hoy = LocalDate.now(ZoneId.systemDefault())
+        val hoy = LocalDate.now(ZoneId.of("America/Mexico_City"))
         val registroExistente = repository.buscarPorFecha(idUsuario, hoy)
 
         return if (registroExistente != null) {

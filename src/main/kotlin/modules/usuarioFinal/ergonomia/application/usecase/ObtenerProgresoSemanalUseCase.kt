@@ -13,14 +13,14 @@ import java.util.Locale
 class ObtenerProgresoSemanalUseCase(private val repository: PosturaRepository) {
 
     suspend fun ejecutar(idUsuario: Int): ProgresoPosturaResponse {
-        val hoy = LocalDate.now(ZoneId.systemDefault())
+        val hoy = LocalDate.now(ZoneId.of("America/Mexico_City"))
 
         val lunesDeEstaSemana = hoy.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
         val diasDeLaSemanaActual = (0..6).map { lunesDeEstaSemana.plusDays(it.toLong()) }
         val historial = repository.obtenerHistorialUsuario(idUsuario)
         val datosGrafica = diasDeLaSemanaActual.map { fecha ->
             val registroDia = historial.find { postura ->
-                LocalDate.ofInstant(postura.fecha, ZoneId.systemDefault()) == fecha
+                LocalDate.ofInstant(postura.fecha, ZoneId.of("America/Mexico_City")) == fecha
             }
 
             val nombreDia = if (fecha == hoy) "Hoy" else fecha.dayOfWeek

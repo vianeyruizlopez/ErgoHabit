@@ -13,7 +13,7 @@ import java.util.Locale
 class ObtenerProgresoAguaUseCase(private val repository: AguaRepository) {
 
     suspend fun ejecutar(idUsuario: Int): HistorialHabitoResponse {
-        val hoy = LocalDate.now(ZoneId.systemDefault())
+        val hoy = LocalDate.now(ZoneId.of("America/Mexico_City"))
         val lunesDeEstaSemana = hoy.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
         val diasDeLaSemanaActual = (0..6).map { lunesDeEstaSemana.plusDays(it.toLong()) }
         val dashboard = repository.obtenerDashboard(idUsuario)
