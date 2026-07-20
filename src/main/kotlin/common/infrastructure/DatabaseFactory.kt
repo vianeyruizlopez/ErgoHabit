@@ -2,6 +2,7 @@ package com.alilopez.common.infrastructure
 
 import com.alilopez.modules.usuarios.infrastructure.persistence.UsuarioTable
 import com.alilopez.modules.catalogosRol.infrastructure.persistence.RolTable
+import com.alilopez.modules.autentificacion.infrastructure.persistence.CodigoVerificacionTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.jetbrains.exposed.sql.Database
@@ -43,7 +44,7 @@ object DatabaseFactory {
         Database.connect(dataSource)
 
         transaction {
-            SchemaUtils.create(RolTable, UsuarioTable)
+            SchemaUtils.create(RolTable, UsuarioTable, CodigoVerificacionTable)
         }
     }
 }
