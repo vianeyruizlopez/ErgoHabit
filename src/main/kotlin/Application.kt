@@ -32,6 +32,9 @@ import com.alilopez.modules.usuarioTester.habitos.infrastructure.rest.tareaModul
 import com.alilopez.modules.usuarios.infrastructure.rest.UsuarioController
 import com.alilopez.modules.usuarios.infrastructure.rest.usuarioRouting
 import com.alilopez.modules.usuarios.usuarioModule
+import com.alilopez.modules.administrador.adminModule
+import com.alilopez.modules.administrador.reportes.infrastructure.rest.AdminReportesController
+import com.alilopez.modules.administrador.reportes.infrastructure.rest.adminReportesRouter
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.serialization.kotlinx.json.json
@@ -60,7 +63,8 @@ fun Application.module() {
             ejercicioModule,
             tareaModule,
             posturaModule,
-            fraseModule
+            fraseModule,
+            adminModule
             )
     }
 
@@ -96,6 +100,7 @@ fun Application.module() {
     val tareaController by inject<TareaController>()
     val posturaController by inject<PosturaController>()
     val frasesController by inject<FrasesController>()
+    val adminReportesController by inject<AdminReportesController>()
 
     routing {
         usuarioRouting(usuarioController)
@@ -108,5 +113,6 @@ fun Application.module() {
         tareaRouter(tareaController)
         posturaRouter(posturaController)
         frasesRouter(frasesController)
+        adminReportesRouter(adminReportesController)
     }
 }
