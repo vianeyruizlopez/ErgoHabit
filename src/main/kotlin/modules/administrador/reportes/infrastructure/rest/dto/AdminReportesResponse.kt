@@ -15,6 +15,7 @@ data class KpiPosturaGlobalResponse(
 
 @Serializable
 data class DetalleSemanaPosturaResponse(
+    val etiquetaSemana: String,
     val numeroSemana: Int,
     val inicioSemana: String,
     val totalUsuarios: Int,

@@ -12,6 +12,7 @@ data class KpiPosturaGlobal(
 
 
 data class DetalleSemanaPostura(
+    val etiquetaSemana: String,
     val numeroSemana: Int,
     val inicioSemana: String,
     val totalUsuarios: Int,

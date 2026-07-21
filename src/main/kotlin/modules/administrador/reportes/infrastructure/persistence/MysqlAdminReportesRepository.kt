@@ -40,10 +40,11 @@ class MysqlAdminReportesRepository : AdminReportesRepository {
                 while (rs.next()) {
                     detalleSemanal.add(
                         DetalleSemanaPostura(
-                            numeroSemana    = rs.getInt("numero_semana"),
-                            inicioSemana    = rs.getString("inicio_semana"),
-                            totalUsuarios   = rs.getInt("total_usuarios"),
-                            promedioAlertas = rs.getDouble("promedio_alertas")
+                            etiquetaSemana  = rs.getString("etiquetaSemana"),
+                            numeroSemana    = rs.getInt("numeroSemana"),
+                            inicioSemana    = rs.getString("inicioSemana"),
+                            totalUsuarios   = rs.getInt("totalUsuarios"),
+                            promedioAlertas = rs.getDouble("promedioAlertas")
                         )
                     )
                 }

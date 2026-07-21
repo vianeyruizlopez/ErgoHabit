@@ -27,6 +27,7 @@ class AdminReportesController(
                 ),
                 detalleSemanal = datos.detalleSemanal.map {
                     DetalleSemanaPosturaResponse(
+                        etiquetaSemana  = it.etiquetaSemana,
                         numeroSemana    = it.numeroSemana,
                         inicioSemana    = it.inicioSemana,
                         totalUsuarios   = it.totalUsuarios,
