@@ -1,29 +1,27 @@
-package com.alilopez.modules.usuarioFinal.ergonomia.infrastructure.persistence
+package com.alilopez.modules.usuarioFinal.ergonomia.infrestructure.persistence
 
 import com.alilopez.modules.usuarioFinal.ergonomia.domain.model.Postura
 import com.alilopez.modules.usuarioFinal.ergonomia.domain.repository.PosturaRepository
-import com.alilopez.modules.usuarioFinal.ergonomia.infrestructure.persistence.PosturaTable
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.javatime.date
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.time.LocalDate
+import java.time.ZoneId
 
 class MysqlPosturaRepository : PosturaRepository {
 
     override suspend fun buscarPorFecha(idUsuario: Int, fecha: LocalDate): Postura? = newSuspendedTransaction {
         PosturaTable
-            .select {
-                (PosturaTable.idUsuario eq idUsuario) and
-                        (PosturaTable.fecha.date() eq fecha)
-            }
+            .select { PosturaTable.idUsuario eq idUsuario }
             .map { toDomain(it) }
-            .singleOrNull()
+            .find { postura ->
+                postura.fecha?.atZone(ZoneId.of("America/Mexico_City"))?.toLocalDate()?.isEqual(fecha) == true
+            }
     }
 
     override suspend fun insertar(historial: Postura): Boolean = newSuspendedTransaction {
         PosturaTable.insert {
-            it[this.idUsuario] = historial.idUsuario
-            it[this.totalAlertas] = historial.totalAlertas
+            it[idUsuario] = historial.idUsuario
+            it[totalAlertas] = historial.totalAlertas
         }
         true
     }

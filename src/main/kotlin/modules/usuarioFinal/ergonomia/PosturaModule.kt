@@ -4,9 +4,9 @@ import com.alilopez.modules.usuarioFinal.ergonomia.application.usecase.ObtenerPr
 import com.alilopez.modules.usuarioFinal.ergonomia.application.usecase.RegistrarPosturaUseCase
 import com.alilopez.modules.usuarioFinal.ergonomia.application.usecase.VerHistorialPosturaUseCase
 import com.alilopez.modules.usuarioFinal.ergonomia.domain.repository.PosturaRepository
-import com.alilopez.modules.usuarioFinal.ergonomia.infrastructure.persistence.MysqlPosturaRepository
 import com.alilopez.modules.usuarioFinal.ergonomia.infrastructure.rest.PosturaController
 import com.alilopez.modules.usuarioFinal.ergonomia.infrastructure.rest.posturaRouter
+import com.alilopez.modules.usuarioFinal.ergonomia.infrestructure.persistence.MysqlPosturaRepository
 import io.ktor.server.application.Application
 import io.ktor.server.routing.routing
 import org.koin.dsl.module
