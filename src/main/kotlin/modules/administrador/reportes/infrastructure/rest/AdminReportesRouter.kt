@@ -13,6 +13,11 @@ fun Route.adminReportesRouter(controller: AdminReportesController) {
                     ?.payload?.getClaim("idRol")?.asInt() ?: 0
                 controller.obtenerReportePostura(call, idRol)
             }
+            get("/postura-dias") {
+                val idRol = call.principal<JWTPrincipal>()
+                    ?.payload?.getClaim("idRol")?.asInt() ?: 0
+                controller.obtenerReportePosturaDiasExtremos(call, idRol)
+            }
         }
     }
 }

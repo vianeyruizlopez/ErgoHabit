@@ -4,4 +4,5 @@ import com.alilopez.modules.administrador.reportes.domain.model.ReportePosturaCo
 
 interface AdminReportesRepository {
     suspend fun obtenerReportePostura(): ReportePosturaComunidad
+    suspend fun obtenerReportePosturaDiasExtremos(): ReportePosturaComunidad
 }
